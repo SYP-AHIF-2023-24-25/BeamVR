@@ -1,5 +1,28 @@
 # BeamVR
-BeamVR
+## Projektantrag
+### Ausgangslage
+#### Ist-Situation
+Bei BeamVR handelt es sich um ein Unity Projekt mit der Idee reale Gegenstände in die VR-Welt zu bringen.
+Es gibt ein altes Projekt welches leider nicht ganz funktioniert, zb Hüfttracker, Balken-Offset.
+
+#### Verbesserungspotenzial
+Wir wollen eine neue, bessere Version machen, in welcher der Hüfttracker und Co funktionieren und das Projekt erweitern.
+
+### Zielsetzung
+#### Konzept zur Problemlösung
+![Mindmap](Mindmap.png)
+
+### Projektrisiken
+- Hardwarediebstahl
+- Hardwarebeschädigung/zerstörung
+- bei zu spätem Arbeiten in der Schule eingesperrt werden
+
+### Planung
+#### Grobe Meilensteine
+- Balken in die VR-Welt bringen
+- Alles wird korrekt getrackt
+- schöne Spielwelt
+- weitere Funktionen
 
 ## User Stories
 
@@ -30,4 +53,3 @@ BeamVR
 - As a player, I want flying objects to cause me falling down.
 
 - As a player, I want the beam in the game to align perfectly with the beam in real life.
-
