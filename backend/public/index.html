@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Page from BeamVR for displaying the Scoreboard and Livestream from the Game">
+  <title>BeamVR</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container"><br>
+    <h1>BeamVR</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Highscores</h2>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Bild</th>
+              <th>Name</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Hier werden die Daten eingefügt -->
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h2>Livevideofeed</h2>
+        <div class="row">
+          <div class="col-12">
+            <h4>VR-Sicht</h4>
+            <video id="VRStream" autoplay muted class="full-width-video" controls></video>
+            <img src="./media/noSource.jpg" id="noSourceImageOne" class="noSourceImage" height="600" style="display: none;">
+          </div>
+          <div class="col-12 mt-2">
+            <h4>3rd-Person Sicht</h4>
+            <video id="ThirdPersonStream" autoplay muted loop class="full-width-video" controls></video>
+            <img src="./media/noSource.jpg" id="noSourceImageTwo" class="noSourceImage" style="display: none;">
+            <small id="3CamWarning"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

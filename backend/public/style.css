@@ -1,0 +1,26 @@
+body,
+html {
+    height: 100%;
+    margin: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: lightgray;
+}
+
+.full-width-video {
+    width: 100%;
+}
+
+video {
+    width: 100%;
+}
+img {
+    width: 100px;
+    height: 100px;
+}
+video { /* Um die Steuerung des Videos nicht anzuzeigen */
+    pointer-events: none;
+}
+
+#ThirdPersonStream { /* Um den Videostream zu spiegeln damit er wieder normal ist (DEBUG only wegen Webcam) */
+    transform: scaleX(-1);
+  }
