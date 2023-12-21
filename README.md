@@ -48,3 +48,39 @@ Wenn man vom Balken fällt, ist das Spiel verloren und das Spiel beginnt wieder 
 5. Als Spieler will ich mit Gegenständen (wie Steine oder Lianen des Dschungels) interagieren können, beispielsweise bewegen oder werfen.
 
 6. Als Spieler möchte ich einen menschlichen Körper sehen wenn ich nach unten schaue. Dies sollten eine Hüfte, zwei Beine, zwei Arme und zwei Hände sein.
+
+
+## Planung - Meilensteine 
+
+### Wintersemester 
+#### Sprint 1 
+* Fertige Map 
+* Einfache Tracker kallibrierung
+* Beam wird richtig kallibriert 
+
+#### Sprint 2
+* Model 
+* Die Map wird dem Beam angepasst (alles wird so verschoben, damit der Beam in VR richtig liegt)
+* Das Model ist durch berechnung der Größe exakt so groß wie der User selbst 
+* Gravitation (Drücken von G)
+* Bessere Einbindung der Tracker
+* Inverse Kinematik 
+* Hai + Animation 
+* Funktionierende Webanwendung
+
+##### Sprint 3
+* Bewegungen in VR verlaufen flüssig (Überstreckung nicht mehr möglich)
+* Gravitation - automatisches Runterfallen (ohne Drücken von G)
+* Game Over - Restart
+* Balken Textur
+* Hai kreist im Wasser 
+* Webanwendung - Schnittstellen in Unity 
+* Stadt Map (noch keine Integration - nur funktionstüchtig)
+* Score berechnung für Tadeot
+
+### Sommersemester
+#### Allgemeine Ziele 
+* UI für Auswahl der Map 
+* Einbindung der Stadt Map 
+* Vögel + Animation + Bewegung 
+* weitere Ideen...
