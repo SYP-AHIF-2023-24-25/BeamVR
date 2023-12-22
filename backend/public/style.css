@@ -1,7 +1,7 @@
-body,
-html {
+body, html {
     height: 100%;
-    margin: 5px;
+    margin: 0;
+    padding: 5px;
     font-family: Arial, Helvetica, sans-serif;
     background-color: lightgray;
 }
@@ -10,17 +10,25 @@ html {
     width: 100%;
 }
 
-video {
-    width: 100%;
-}
-img {
-    width: 100px;
-    height: 100px;
-}
-video { /* Um die Steuerung des Videos nicht anzuzeigen */
-    pointer-events: none;
+.video img {
+    max-width: 100%;
+    height: auto;
 }
 
-#ThirdPersonStream { /* Um den Videostream zu spiegeln damit er wieder normal ist (DEBUG only wegen Webcam) */
-    transform: scaleX(-1);
-  }
+#vrImage {
+    width: 100%;
+    max-height: 600px;
+}
+
+.table {
+    font-size: 0.9rem; 
+}
+
+.table td, .table th {
+    padding: .5rem;
+}
+
+.table img {
+    width: 100px;
+    height: 100px; 
+}

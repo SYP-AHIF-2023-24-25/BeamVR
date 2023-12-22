@@ -3,59 +3,111 @@ const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const path = require('path');
-const loki = require('lokijs'); //LokiJS as DB
+const loki = require('lokijs'); // LokiJS as DB
+const fs = require('fs');
+const multer = require('multer');
+const WebSocket = require('ws');
 
-//CONFIG
-//Port of HTTP Server
+const upload = multer({
+  dest: 'tmp/', // Temp folder for uploads
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'image/png') {
+      cb(null, true); // accept png files
+    } else {
+      cb(null, false); // reject other file types
+    }
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024 // max filesize is 10MB
+  }
+});
+
+// CONFIG
 const port = 3030;
 
-//is stream online?
-const STREAMONLINE = true;
-//
-
-// Middleware für die Verarbeitung von JSON-Daten
+// Middleware for handling JSON data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Deliver static files in the 'public' directory
+// Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+const ws = new WebSocket.Server({ server }); //Create Websocket Server
+
+//handle client connections
+ws.on('connection', function connection(ws) {
+  ws.send('Connection established');
+  console.log('Connection established');
+});
+
+//Broadcast messages to all clients
+function broadcastMessage(message) {
+  ws.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
+  });
+}
 
 // Connect to LokiJS DB
 const db = new loki('database.db');
+let collection; // Declare the collection variable at the top-level scope
 
 db.loadDatabase({}, () => {
-  let collection = db.getCollection('beamVR_Highscores'); // Load DB
+  collection = db.getCollection('beamVR_Highscores'); // Initialize the collection variable
 
   if (!collection) {
-    collection = db.addCollection('beamVR_Highscores'); // Falls die Sammlung nicht existiert, erstelle sie
+    collection = db.addCollection('beamVR_Highscores'); // Create collection if it doesn't exist
+  }
+});
+
+// Route to load data from the database
+app.get('/get-data', (req, res) => {
+  const result = collection.find(); // Load complete data
+  res.json(result);
+});
+
+// Route to receive data for the highscore table
+app.post('/add-data', (req, res) => {
+  const newData = req.body;
+
+  if (newData) {
+    collection.insert(newData); // Save new data to the database
+    db.saveDatabase(); // Save changes to the database
+    res.status(201).json({ message: 'Data saved successfully!' });
+  } else {
+    res.status(400).json({ error: 'Invalid request!' });
+  }
+});
+
+// Route to save PNG images
+app.post('/saveImage', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded. Please upload an image.' });
   }
 
-  // Route, um Daten aus der LokiJS-Datenbank abzurufen
-  app.get('/get-data', (req, res) => {
-    const result = collection.find(); // Alle Einträge laden
-    res.json(result);
-  });
+  const tempPath = req.file.path;
+  const targetPath = path.join(__dirname, 'public/media', 'vrgame.png');
 
-  // Route, um JSON-Daten per POST zu empfangen und in die Datenbank einzufügen
-  app.post('/add-data', (req, res) => {
-    const newData = req.body; // Empfangene JSON-Daten
-
-    if (newData) {
-      collection.insert(newData); // Neue Daten in die Datenbank einfügen
-      res.status(201).json({ message: 'Daten erfolgreich hinzugefügt' });
-      db.saveDatabase(); //Save to Database
-    } else {
-      res.status(400).json({ error: 'Ungültige Anfrage' });
+  fs.rename(tempPath, targetPath, err => {
+    if (err) {
+      console.log("Error in saving the file:", err);
+      return res.status(500).json({ error: 'Error saving image!'});
     }
-  });
+    res.status(200).json({ message: 'Image saved successfully!' });
 
-  //SendStatus of Stream (Online/Deactivated)
-  app.get('/get-stream-status', (req, res) => {
-    res.json(STREAMONLINE);
+    //Send file to all clients
+    fs.readFile(targetPath, (err, data) => {
+      if (err) {
+        console.log("Error in reading the file:", err);
+      }
+      broadcastMessage(data);
+      console.log("Broadcasted file...");
+    });
   });
 });
 
-// Start the Server
+// Start the server
 server.listen(port, () => {
-  console.log(`Server is running on Port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

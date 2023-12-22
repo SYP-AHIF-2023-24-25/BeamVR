@@ -1,44 +1,26 @@
-async function startWebcam() {
-  try {
-    //Get Videostream from Webcam and set the stream to the Video Element
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const thirdPersonStream = document.getElementById("ThirdPersonStream");
-    thirdPersonStream.srcObject = stream;
-  } catch (error) {
-    document.getElementById("3CamWarning").textContent = "Kamera blockiert oder nicht verfügbar!";
-  }
-}
-
-let streamOnline = false;
 //Load the Data for the Highscore Table
 document.addEventListener("DOMContentLoaded", function () {
-  //Checke Status des Streams (/get-stream-status)
-  fetch("/get-stream-status")
-    .then((response) => response.json())
-    .then((data) => {
-      streamOnline = data;
-      if (streamOnline == true) {
-        console.log("Stream online");
+  const socket = new WebSocket("ws://localhost:3030");
 
-        //Webcam as 3. Person View
-        startWebcam();
+  socket.addEventListener("open", function (event) {
+    socket.send("Hello Server!");
+  });
 
-        //Debug Video for VR View
-        const vrStream = document.getElementById("VRStream");
-        vrStream.src = "./media/beamVR-Video-Placeholder.mp4";
-        vrStream.loop = true;
-      } else {
-        console.log("Stream deaktiviert!");
+  socket.addEventListener('message', function(event) {
+    const data = event.data;
 
-        //Replace Videos through "NO-Source" Image
-        document.getElementById("ThirdPersonStream").style.display = "none";
-        document.getElementById("VRStream").style.display = "none";
-        document.getElementById("3CamWarning").style.display = "none";
-        document.getElementById("noSourceImageOne").style.display = "block";
-        document.getElementById("noSourceImageTwo").style.display = "block";
-      }
-    })
-    .catch((error) => console.error("Error:", error));
+    if (data instanceof Blob) {
+        const imageUrl = URL.createObjectURL(data);
+        const img = document.getElementById("vrImage");
+        img.src = imageUrl;
+        img.onload = () => {
+            URL.revokeObjectURL(imageUrl);
+        };
+        console.log("Image received and updated");
+    }else{
+      console.log("Message received from Server: "+data);
+    }
+});
 
   //Get Data for Highscore Table
   fetch("/get-data")
@@ -50,8 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
           document.querySelector("tbody").innerHTML += `
                       <tr>
                           <td>${index + 1}</td>
-                          <td><img src="./media/${item.image
-            }" alt="UserImage" class="img-thumbnail"></td>
+                          <td><img src="./media/${
+                            item.image
+                          }" alt="UserImage" class="img-thumbnail"></td>
                           <td>${item.name}</td>
                           <td>${item.score}</td>
                       </tr>`;
