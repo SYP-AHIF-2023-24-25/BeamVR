@@ -1,6 +1,6 @@
 //Load the Data for the Highscore Table
 document.addEventListener("DOMContentLoaded", function () {
-  const socket = new WebSocket("ws://localhost:3030");
+  const socket = new WebSocket("wss://vps-81d09b41.vps.ovh.net");
 
   socket.addEventListener("open", function (event) {
     socket.send("Hello Server!");
