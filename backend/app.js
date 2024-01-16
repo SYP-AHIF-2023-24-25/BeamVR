@@ -31,6 +31,20 @@ const upload = multer({
   },
 });
 
+const apiKey = 'dcfc58543cd6c3cc1f73d8eef31a1cb077393bbebbf28c8c8fb1b69e11ca2167'; // correct API-KEY
+
+const checkApiKey = (req, res, next) => {
+  const receivedApiKey = req.headers['x-api-key'];
+
+  if (receivedApiKey && receivedApiKey === apiKey) {
+    next(); // API-Key is correct, continue
+    console.log("API-Key correct");
+  } else {
+    console.log("API-Key incorrect");
+    res.status(401).json({ error: 'Not authorized' }); // API-Key incorrect or not sent, not authorized
+  }
+};
+
 // HTTPS Server setup
 const httpsServer = https.createServer(credentials, app);
 
@@ -79,7 +93,7 @@ app.get("/get-data", (req, res) => {
 });
 
 // Route to receive data for the highscore table
-app.post("/add-data", (req, res) => {
+app.post("/add-data", checkApiKey, (req, res) => {
   const newData = req.body;
 
   if (newData) {
@@ -92,7 +106,7 @@ app.post("/add-data", (req, res) => {
 });
 
 // Route to save PNG images
-app.post("/saveImage", upload.single("image"), (req, res) => {
+app.post("/saveImage", checkApiKey, upload.single("image"), (req, res) => {
   if (!req.file) {
     return res
       .status(400)
