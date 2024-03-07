@@ -1,11 +1,12 @@
 const express = require("express");
-const https = require("https"); // Import HTTPS module
+const https = require("https");
 const fs = require("fs");
 const path = require("path");
-const axios = require("axios"); // Axios for HTTP requests
-const loki = require("lokijs"); // LokiJS for database
+const axios = require("axios");
+const { LeoDB } = require("./leodb/");
 const multer = require("multer");
 const WebSocket = require("ws");
+const cors = require("cors");
 
 const app = express();
 
@@ -25,31 +26,29 @@ const credentials = { key: privateKey, cert: certificate };
 
 // Code to handle file uploads (PNG)
 const upload = multer({
-  dest: "tmp/", // Temp folder for checking uploads
+  dest: "tmp/",
   fileFilter: (req, file, cb) => {
-      if (file.mimetype === "image/png") {
-          cb(null, true); // accept png files
-      } else {
-          cb(null, false); // reject other file types
-      }
+    if (file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
   },
   limits: {
-      fileSize: 10 * 1024 * 1024, // max filesize is 10MB
+    fileSize: 10 * 1024 * 1024,
   },
 });
 
 const apiKey =
-  "dcfc58543cd6c3cc1f73d8eef31a1cb077393bbebbf28c8c8fb1b69e11ca2167"; // correct API-KEY
+  "dcfc58543cd6c3cc1f73d8eef31a1cb077393bbebbf28c8c8fb1b69e11ca2167";
 
 const checkApiKey = (req, res, next) => {
   const receivedApiKey = req.headers["x-api-key"];
 
   if (receivedApiKey && receivedApiKey === apiKey) {
-    next(); // API-Key is correct, continue
-    //console.log("API-Key correct");
+    next();
   } else {
-    //console.log("API-Key incorrect");
-    res.status(401).json({ error: "Not authorized" }); // API-Key incorrect or not sent, not authorized
+    res.status(401).json({ error: "Not authorized" });
   }
 };
 
@@ -64,13 +63,19 @@ console.log("WebSocket (WSS) Server running!");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from 'public' directory
-app.use(express.static(path.join(__dirname, "public")));
+// Use CORS middleware
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
 
 // WebSocket connection handling
 ws.on("connection", function connection(ws) {
   ws.send("Connection established");
-  console.log("Connection established");
 });
 
 // Function to broadcast messages to all clients
@@ -80,24 +85,27 @@ function broadcastMessage(message) {
       client.send(message);
     }
   });
-  //console.log("Broadcasted message:", message);
 }
 
-// Connect to LokiJS DB
-const db = new loki("database.db");
-let collection; // Declare the collection variable at the top-level scope
+// Connect to LeoDB
+const db = new LeoDB();
 
-db.loadDatabase({}, () => {
-  collection = db.getCollection("beamVR_Highscores"); // Initialize the collection variable
+// Check if database file exists
+if (fs.existsSync("database.db")) {
+  db.loadFromFile("database.db");
+  console.log("SERVER: Database loaded from file.");
+} else {
+  console.log("SERVER: Database file not found. Created empty database.");
+}
 
-  if (!collection) {
-    collection = db.addCollection("beamVR_Highscores"); // Create collection if it doesn't exist
-  }
+// Endpoint which redirects convieniently to the angualar frontend
+app.get("/", (req, res) => {
+  res.redirect("https://vps-81d09b41.vps.ovh.net:4200/home");
 });
 
 // Route to load data from the database
 app.get("/get-data", (req, res) => {
-  const result = collection.find(); // Load complete data
+  const result = db.read(); // Read all data
   res.json(result);
 });
 
@@ -106,30 +114,24 @@ app.get("/get-user-image", async (req, res) => {
   try {
     const { filename } = req.query;
 
-    // Check if the "filename" parameter is present
     if (!filename) {
       return res.status(400).json({ error: 'Parameter "filename" is missing' });
     }
 
-    // Check if the filename has a ".png" extension
     if (!filename.endsWith(".png")) {
       return res.status(400).json({
         error: 'Invalid file extension. Only ".png" files are supported.',
       });
     }
 
-    // URL of the tadeot image (hidden from public)
     const imageUrl = `https://tadeot.htl-leonding.ac.at/tadeot-backend-v23/images/${filename}`;
 
-    // Check if the file exists
     const imageExists = await checkFileExists(imageUrl);
 
-    // If the file exists, send the image back
     if (imageExists) {
       const imageStream = await axios.get(imageUrl, { responseType: "stream" });
       imageStream.data.pipe(res);
     } else {
-      // If the file doesn't exist, send the default file from the server
       const defaultImageStream = fs.createReadStream(
         "./public/media/userpic-Placeholder.jpg"
       );
@@ -169,15 +171,14 @@ app.post("/add-data", checkApiKey, (req, res) => {
   const newData = req.body;
 
   if (newData) {
-    console.log("Received data:", newData);
-    newData.tadeotId = newData.tadeotId.toString().padStart(4, "0"); // Pad tadeotId with leading zeros to 4 digits
+    console.log("DEBUG: Received data:", newData);
+    newData.tadeotId = newData.tadeotId.toString().padStart(4, "0");
     const imageURL =
       "https://vps-81d09b41.vps.ovh.net/get-user-image?filename=Visitor_" +
       newData.tadeotId +
-      ".png"; //Build url to image, by tadeotId
+      ".png";
     newData.image = imageURL;
 
-    // Check if the name is empty, if so, set it to the name generated in generateUniquePlayerCode()
     if (
       newData.name == "" ||
       newData.name == null ||
@@ -185,9 +186,9 @@ app.post("/add-data", checkApiKey, (req, res) => {
     ) {
       newData.name = generateUniquePlayerCode();
     }
-    collection.insert(newData); // Save new data to the database
-    db.saveDatabase(); // Save changes to the database
-    broadcastMessage("updateHighscores"); // Send message to all clients to update the highscore table
+    db.create(newData); // Use LeoDB to create new data
+    db.saveToFile("database.db"); // Save the database to a file, so we can restore the data after a server restart
+    broadcastMessage("updateHighscores"); // Send Signal to all clients to update the highscore table
     res.status(201).json({ message: "Data saved successfully!" });
   } else {
     res.status(400).json({ error: "Invalid request!" });
@@ -207,20 +208,43 @@ app.post("/saveImage", checkApiKey, upload.single("image"), (req, res) => {
 
   fs.rename(tempPath, targetPath, (err) => {
     if (err) {
-      console.log("Error in saving the file:", err);
+      console.log("SERVER: Error in saving the file:", err);
       return res.status(500).json({ error: "Error saving image!" });
     }
     res.status(201).json({ message: "Image saved successfully!" });
 
-    //Send file to all clients
     fs.readFile(targetPath, (err, data) => {
       if (err) {
-        console.log("Error in reading the file:", err);
+        console.log("SERVER: Error in reading the file:", err);
       }
       broadcastMessage(data);
-      fs.unlinkSync(targetPath); // Delete the file after sending it
+      fs.unlinkSync(targetPath);
     });
   });
+});
+
+// Protected Endpoint to delete all data
+app.delete("/delete-data", checkApiKey, (req, res) => {
+  db.deleteAll();
+  db.saveToFile("database.db"); // Delete all data and save the database to a file to overrite the old data
+  broadcastMessage("updateHighscores");
+  console.log("SERVER: All data deleted!");
+  res.json({ message: "All data deleted!" });
+});
+
+// Protected Endpoint to delete data by ID
+app.delete("/delete-data/:id", checkApiKey, (req, res) => {
+  const ParamID = req.params.id;
+
+  const result = db.delete({ id: ParamID }); // Delete data by ID
+  console.log("SERVER: Data deleted by ID:", result);
+  if (result == true) {
+    broadcastMessage("updateHighscores");
+    db.saveToFile("database.db");
+    res.status(200).json({ message: "Data deleted!" });
+  } else {
+    res.status(404).json({ error: "Error deleting data!" });
+  }
 });
 
 // Start the HTTPS Server on port 443
