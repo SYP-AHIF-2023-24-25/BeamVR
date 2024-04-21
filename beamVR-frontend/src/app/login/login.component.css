@@ -1,0 +1,102 @@
+.card {
+    max-width: 30%;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+p {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.form-outline {
+    margin-bottom: 20px;
+}
+
+.form-outline label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group button {
+    background: none;
+    border: none;
+    position: absolute;
+    right: 10px;
+}
+
+.password-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#togglePassword {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header img {
+    width: 25%;
+    margin-top: 5px;
+}
+
+.header h1 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+    .card {
+        max-width: 80%;
+    }
+
+    .header img {
+        width: 40%;
+    }
+
+    .header h1, p {
+        font-size: 18px;
+    }
+
+    .input-group button, #togglePassword {
+        right: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        max-width: 95%;
+    }
+
+    .header img {
+        width: 50%;
+    }
+
+    p, .header h1 {
+        font-size: 16px;
+    }
+
+    .input-group button, #togglePassword {
+        position: relative;
+        margin-top: 5px;
+    }
+}
