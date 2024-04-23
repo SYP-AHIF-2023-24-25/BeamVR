@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Page from BeamVR for displaying the Scoreboard and Livestream from the Game">
+  <title>BeamVR</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container my-3">
+    <h1>BeamVR</h1>
+    <div class="alert alert-danger" role="alert" id="connectionAlert" style="display: none;">
+      <h4 class="alert-heading">Verbindung zum Server verloren!</h4>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 col-md-12">
+        <h2>Highscores</h2>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Bild</th>
+              <th>Name</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-6 col-md-12" style="margin-bottom: 5px;">
+        <h2>Livefeed</h2>
+        <div class="row">
+          <div class="col-12">
+            <h4>VR-Sicht</h4>
+            <img src="./media/black.png" id="vrImage" class="img-fluid">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+      <span>Ein Projekt von Schülern der <a href="https://www.htl-leonding.at/">HTL Leonding</a> - <span> © BeamVR 2024</span>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="index-min.js"></script>
+</body>
+</html>

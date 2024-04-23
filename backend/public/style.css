@@ -1,0 +1,51 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: lightgray;
+}
+
+.full-width-video {
+    width: 100%;
+}
+
+.video img {
+    max-width: 100%;
+    height: auto;
+}
+
+#vrImage {
+    width: 100%;
+    max-height: 600px;
+}
+
+.table {
+    font-size: 0.9rem; 
+}
+
+.table td, .table th {
+    padding: .5rem;
+}
+
+.table img {
+    width: 100px;
+    height: 100px; 
+}
+
+.alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.alert-danger {
+ color: red;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
