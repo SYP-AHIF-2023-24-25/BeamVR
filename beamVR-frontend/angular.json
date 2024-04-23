@@ -58,10 +58,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "beamVR-frontend:build:production"
+              "browserTarget": "beamVR-frontend:build:production"
             },
             "development": {
-              "buildTarget": "beamVR-frontend:build:development"
+              "browserTarget": "beamVR-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
