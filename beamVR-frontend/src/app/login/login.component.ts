@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
 
     async onSubmit(): Promise<void> {
+        console.log(this.username);
         try {
             const hashedPassword = await this.hashPassword(this.password);
             const data = {username: this.username, passwordHash: hashedPassword};

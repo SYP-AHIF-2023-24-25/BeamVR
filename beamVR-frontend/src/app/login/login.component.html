@@ -10,14 +10,13 @@
             <form id="loginForm">
                 <div class="form-outline">
                     <label for="username"><p>Username</p></label>
-                    <input type="text" id="username" name="username" autocomplete="off">
+                    <input type="text" id="username" [(ngModel)]="username" name="username" autocomplete="off">
                 </div>
 
                 <div class="form-outline">
                     <label for="password"><p>Password</p></label>
-
                     <div class="password-flex">
-                        <input [type]="showPassword ? 'text' : 'password'" id="password" name="password">
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="password" name="password">
                         <button id="togglePassword" (click)="togglePassword()"
                                 style="max-width: 40px; box-shadow: none">
                             <img src="../../../assets/eye-icon.png" style="max-width: 20px;" alt="Show Password"/>
