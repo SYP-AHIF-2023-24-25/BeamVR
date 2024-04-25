@@ -100,16 +100,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Use CORS middleware to block requests from other origins
-app.use(
-  cors({
-    origin: "https://vps-81d09b41.vps.ovh.net:4200", // Allow only the Angular frontend to access the API
-    methods: "GET,POST,DELETE, PUT",
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  })
-);
+// Use CORS middleware to NOT block requests from other origins
+app.use(cors({}));
 
 // Hardcoded credentials for admin login
 const validUsername = "beam-admin";
