@@ -185,8 +185,10 @@ const db = new LeoDB();
 // Check if database file exists
 if (fs.existsSync("database.db")) {
   db.loadFromFile("database.db");
+  console.log("Database file found and loaded successfully!");
   logToFile("Database file found and loaded successfully!");
 } else {
+  console.log("No database file found. Starting with empty database.");
   logToFile("No database file found. Starting with empty database.");
 }
 
@@ -199,6 +201,7 @@ app.get("/", (req, res) => {
 app.get("/get-data", (req, res) => {
   const result = db.read(); // Read all data
   // transform id to DataID
+  console.log(result);
   result.forEach((element) => {
     element.dataID = element.id;
   });
@@ -301,7 +304,6 @@ app.post("/add-data", checkIfRequestIsAuthenticated, (req, res) => {
     }
 
     // add date time to the data
-    newData.getDateTime() = new Date().toISOString();
 
     db.create(newData); // Use LeoDB to create new data
     db.saveToFile("database.db"); // Save the database to a file, so we can restore the data after a server restart
