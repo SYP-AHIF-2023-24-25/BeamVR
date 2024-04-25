@@ -183,8 +183,10 @@ function broadcastMessage(message) {
 const db = new LeoDB();
 
 // Check if database file exists
-if (fs.existsSync("database.db")) {
-  db.loadFromFile("database.db");
+let absolutePath = path.resolve("database.db");
+console.log("Database file path: " + absolutePath);
+if (fs.existsSync(absolutePath)) {
+  db.loadFromFile(absolutePath);
   console.log("Database file found and loaded successfully!");
   logToFile("Database file found and loaded successfully!");
 } else {
