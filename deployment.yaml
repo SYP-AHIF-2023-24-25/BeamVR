@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beamvr
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: beamvr
+  template:
+    metadata:
+      labels:
+        app: beamvr
+    spec:
+      containers:
+        - name: beambr-app
+          image: nginx:latest
+          ports:
+            - containerPort: 80
