@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
             const hashedPassword = await this.hashPassword(this.password);
             const data = {username: this.username, passwordHash: hashedPassword};
 
-            this.http.post("https://vps-81d09b41.vps.ovh.net/loginAuth", data).subscribe(
+            this.http.post("/api/loginAuth", data).subscribe(
                 (response: any) => {
                     document.cookie = `authToken=${response.sessionID}; path=/; samesite=strict`;
                     this.router.navigate(['/admin']);
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
 
     checkSession(): void {
-        fetch("https://vps-81d09b41.vps.ovh.net/checkSession", {
+        fetch("/api/checkSession", {
             method: "GET",
             credentials: "include"
         }).then((res) => {

@@ -35,7 +35,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     checkSession(): void {
         this.subscriptions.add(
-            this.http.get<{ status: number }>('https://vps-81d09b41.vps.ovh.net/checkSession', {
+            this.http.get<{ status: number }>('/api/checkSession', {
                 withCredentials: true
             }).subscribe({
                 next: res => {
@@ -56,7 +56,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     fetchData(): void {
         this.subscriptions.add(
-            this.http.get<UserData[]>('https://vps-81d09b41.vps.ovh.net/get-data', { withCredentials: true })
+            this.http.get<UserData[]>('/api/get-data', { withCredentials: true })
                 .subscribe(data => {
                     // @ts-ignore
                     this.data = data.sort((a, b) => b.score - a.score)
@@ -96,7 +96,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     deleteData(id: number): void {
         this.subscriptions.add(
-            this.http.delete(`https://vps-81d09b41.vps.ovh.net/delete-data/${id}`, { withCredentials: true })
+            this.http.delete(`/api/delete-data/${id}`, { withCredentials: true })
                 .subscribe(() => {
                     this.fetchData();
                 })
@@ -105,7 +105,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     deleteAllData(): void {
         this.subscriptions.add(
-            this.http.delete('https://vps-81d09b41.vps.ovh.net/delete-data', { withCredentials: true })
+            this.http.delete('/api/delete-data', { withCredentials: true })
                 .subscribe(() => {
                     this.data = [];
                     this.updateDeleteButtonState();
@@ -126,7 +126,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     updateData(item: UserData): void {
-        const updateUrl = `https://vps-81d09b41.vps.ovh.net/update-data/${item.tadeotId}`;
+        const updateUrl = `/api/update-data/${item.tadeotId}`;
         this.subscriptions.add(
             this.http.put(updateUrl, item, { withCredentials: true })
                 .subscribe(() => {
@@ -138,7 +138,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     logout(): void {
         this.subscriptions.add(
-            this.http.get('https://vps-81d09b41.vps.ovh.net/logout', {
+            this.http.get('/api/logout', {
                 withCredentials: true
             }).subscribe(() => {
                 this.isLoggedIn = false;
