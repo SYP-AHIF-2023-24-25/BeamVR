@@ -69,7 +69,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     }
 
     fetchHighscores(): void {
-        const url = `https://vps-81d09b41.vps.ovh.net/get-data?mode=${this.selectedHighscore}`;
+        const url = `/api/get-data?mode=${this.selectedHighscore}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
