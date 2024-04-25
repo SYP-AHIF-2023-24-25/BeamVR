@@ -9,6 +9,7 @@ const WebSocket = require("ws");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const { log } = require("console");
 
 const app = express();
 
@@ -100,8 +101,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Use CORS middleware to NOT block requests from other origins
-app.use(cors({}));
+// Use CORS middleware to block requests from other origins
+app.use(
+  cors({
+    origin: "https://vps-81d09b41.vps.ovh.net:4200", // CORS origin
+    methods: "GET,POST,DELETE, PUT",
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
 
 // Hardcoded credentials for admin login
 const validUsername = "beam-admin";
@@ -370,16 +379,26 @@ app.get("/checkSession", (req, res) => {
     let sessionID = req.cookies.authToken;
     let ipAddress = req.connection.remoteAddress;
 
+    logToFile("Checking session for sessionID: " + sessionID + " from IP: " + removeIPv6Prefix(ipAddress)); //DEV
+
     // Check if sessionID and ipAddress combination exists in activeSessions
     let sessionExists = activeSessions.some(
       (session) =>
         session.sessionID === sessionID && session.ipAddress === ipAddress
     );
 
+    // log the reasult of the session check
+    logToFile("Session check result: " + sessionExists); //DEV
+    // if false log the active sessions
+    if (!sessionExists) {
+      logToFile("Active Sessions: " + JSON.stringify(activeSessions)); //DEV
+    }
+
     if (sessionExists) {
-      res.sendStatus(200);
+      // send back message and status 200 if session is valid
+      res.status(200).send({ code: 200, message: "Welcome" });
     } else {
-      res.sendStatus(401);
+      res.status(401).send({ code: 401, message: "Access denied!" });
     }
   } catch (error) {
     logToFile("Error checking session: " + error);
@@ -398,6 +417,7 @@ app.post("/loginAuth", (req, res) => {
     let ipAddress = req.connection.remoteAddress;
     activeSessions.push({ sessionID, username, ipAddress }); // Storing session along with username
     logToFile("Login successful for '" + username + "' from IP: " + removeIPv6Prefix(ipAddress));
+    logToFile("SessionID: " + sessionID); //DEV
 
     // Tell Angular that the login was successful and send the sessionID
     res

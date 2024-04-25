@@ -1,0 +1,32 @@
+<section class="container">
+    <div class="card">
+
+        <div class="header">
+            <img id="logo" src="../../assets/Logo-tranparent.webp" alt="Logo"/>
+            <h1>Login</h1>
+        </div>
+
+        <div class="card-body">
+            <form id="loginForm">
+                <div class="form-outline">
+                    <label for="username"><p>Username</p></label>
+                    <input type="text" id="username" [(ngModel)]="username" name="username" autocomplete="off">
+                </div>
+
+                <div class="form-outline">
+                    <label for="password"><p>Password</p></label>
+                    <div class="password-flex">
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="password" name="password">
+                        <button id="togglePassword" (click)="togglePassword()"
+                                style="max-width: 40px; box-shadow: none">
+                            <img src="../../../assets/eye-icon.png" style="max-width: 20px;" alt="Show Password"/>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" (click)="onSubmit()" style="margin-top: 10px;">Login</button>
+            </form>
+            <button routerLink="/scores">Continue without logging in</button>
+        </div>
+    </div>
+</section>

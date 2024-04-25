@@ -1,0 +1,89 @@
+/* Base styles */
+h1 {
+    margin-bottom: 20px;
+    margin-top: 15px;
+}
+
+.card {
+    min-width: max-content;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+input {
+    height: 30px;
+}
+
+input::placeholder {
+    color: black;
+}
+
+h4 {
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    margin-top: 10px;
+    color: #3d0303;
+}
+
+#search-table {
+    margin-top: 20px;
+}
+
+#search-table tr th, #search-table tr td {
+    padding: 10px;
+    font-size: 15px;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        flex-direction: column;
+    }
+
+    .navigation {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #search-table, #search-table tr th, #search-table tr td {
+        font-size: 12px;
+    }
+
+    h1, h4 {
+        text-align: center;
+    }
+
+    input, input::placeholder {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        min-width: 100%;
+    }
+
+    .card-body {
+        gap: 20px;
+    }
+
+    h4 {
+        font-size: 12px;
+    }
+
+    .navigation {
+        gap: 5px;
+    }
+}

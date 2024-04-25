@@ -1,0 +1,101 @@
+.card {
+    min-width: max-content;
+    height: max-content;
+}
+
+h1 {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+#live-feed {
+    width: 500px;
+    height: 400px;
+}
+
+#auto-scrolling {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+}
+#auto-scrolling input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+
+}
+
+.navigation {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.feed-body {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.highscores {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        flex-direction: column;
+    }
+
+    .navigation {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    h1, h4 {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        min-width: 100%;
+    }
+
+    .card-body {
+        gap: 20px;
+    }
+
+    h4 {
+        font-size: 12px;
+    }
+
+    .navigation {
+        gap: 5px;
+    }
+
+    .feed-body {
+        flex-direction: column;
+    }
+
+    #live-feed {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
