@@ -12,6 +12,8 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 
+const ENABLE_HTTPS = false;
+
 // Object to store the active sessions of users
 let activeSessions = [];
 
@@ -41,23 +43,30 @@ function getDateTime() {
   return datetime;
 }
 
-// function to log to file
 function logToFile(message) {
-  fs.appendFileSync(logFileName, getDateTime()+": " + message + "\n");
+    if (!fs.existsSync("logs")) {
+        fs.mkdirSync("logs");
+    }
+    fs.appendFileSync(logFileName, getDateTime()+": " + message + "\n");
 }
 
 logToFile("Server starting...");
 
-// SSL Certificate and Private Key paths
-const privateKey = fs.readFileSync(
-  "/etc/letsencrypt/live/vps-81d09b41.vps.ovh.net/privkey.pem",
-  "utf8"
-);
-const certificate = fs.readFileSync(
-  "/etc/letsencrypt/live/vps-81d09b41.vps.ovh.net/fullchain.pem",
-  "utf8"
-);
-const credentials = { key: privateKey, cert: certificate };
+// HTTPS
+let privateKey;
+let certificate;
+let credentials;
+if (ENABLE_HTTPS) {
+  privateKey = fs.readFileSync(
+      "/etc/letsencrypt/live/vps-81d09b41.vps.ovh.net/privkey.pem",
+      "utf8"
+  );
+  certificate = fs.readFileSync(
+      "/etc/letsencrypt/live/vps-81d09b41.vps.ovh.net/fullchain.pem",
+      "utf8"
+  );
+  credentials = { key: privateKey, cert: certificate };
+}
 
 // Code to handle file uploads (PNG)
 const upload = multer({
@@ -146,9 +155,14 @@ const checkIfRequestIsAuthenticated = (req, res, next) => {
 };
 
 // HTTPS Server setup
-const httpsServer = https.createServer(credentials, app);
+let server;
+if (ENABLE_HTTPS) {
+  server = https.createServer(credentials, app);
+} else {
+  server = app;
+}
 // WebSocket Server setup (attached to the HTTPS server)
-const ws = new WebSocket.Server({ server: httpsServer });
+const ws = new WebSocket.Server({ server: server });
 logToFile("WebSocket (WSS) Server running!");
 
 // WebSocket connection handling
@@ -511,7 +525,7 @@ app.get("/logout", (req, res) => {
 });*/
 
 // Start the HTTPS Server on port 443
-httpsServer.listen(443, () => {
-  console.log("HTTPS Server running on port 443");
-  logToFile("HTTPS Server running on port 443");
+server.listen(ENABLE_HTTPS ? 443 : 3000, () => {
+  console.log("Server running on port " + (ENABLE_HTTPS ? 443 : 3000));
+  logToFile("Server running on port " + (ENABLE_HTTPS ? 443 : 3000));
 });
