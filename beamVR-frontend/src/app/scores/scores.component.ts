@@ -28,7 +28,7 @@ export class ScoresComponent implements OnInit {
     }
 
     fetchHighscores(): void {
-        this.fetchData("/api/get-data")
+        this.fetchData("../api/get-data")
             .then(data => {
                 this.highscores = data.sort((a, b) => b.score - a.score);
             })
@@ -38,7 +38,7 @@ export class ScoresComponent implements OnInit {
     searchByName(): void {
         if (!this.searchValue) return;
         this.searchInitiated = true;
-        this.fetchData(`/api/search-data/${this.searchValue}`)
+        this.fetchData(`../api/search-data/${this.searchValue}`)
             .then(data => {
                 this.searchResults = data && data.length > 0 ? data : [];
             })
