@@ -1,5 +1,3 @@
-# Allow access from the internet
-#
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,13 +13,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nginx
+                name: beamvr-app
                 port:
-                  number: 80
+                  number: 8080
           - path: /e.plakolb/(.*)$
             pathType: Prefix
             backend:
               service:
-                name: nginx
+                name: beamvr-app
                 port:
-                  number: 80
+                  number: 8080
