@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appsrv
+  name: beamvr-app
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: appsrv
+      app: beamvr-app
   template:
     metadata:
       labels:
-        app: appsrv
+        app: beamvr-app
     spec:
       containers:
-        - name: appsrv
+        - name: beamvr-app
           image: beamvr-app
           imagePullPolicy: Always
           ports:
@@ -42,7 +42,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: appsrv
+  name: beamvr-app
 
 spec:
   ports:
@@ -50,4 +50,4 @@ spec:
       targetPort: 8080
       protocol: TCP
   selector:
-    app: appsrv
+    app: beamvr-app
