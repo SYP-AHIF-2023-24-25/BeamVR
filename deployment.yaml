@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: beamvr-deployment
+  name: beamvr-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: beamvr
+      app: beamvr-app
   template:
     metadata:
       labels:
-        app: beamvr
+        app: beamvr-app
     spec:
       containers:
         - name: beamvr-app
           image: nginx:latest
           ports:
-            - containerPort: 443
+            - containerPort: 80
