@@ -4,7 +4,7 @@ WORKDIR /app/frontend
 COPY beamVR-frontend/package*.json ./
 RUN npm install
 COPY beamVR-frontend/ .
-RUN npm run build
+RUN npm run build -- --base-href /e.plakolb/
 
 # Build-Stage fur das Node.js-Backend
 FROM node:20 as backend-build
