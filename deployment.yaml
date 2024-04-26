@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: beamvr-app
-          image: registry.cloud.htl-leonding.ac.at/e.plakolb/beamvr-app
+          image: registry.cloud.htl-leonding.ac.at/e.plakolb/beamvr-app:latest
           ports:
             - containerPort: 80
