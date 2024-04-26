@@ -23,18 +23,18 @@ spec:
           startupProbe:
             httpGet:
               path: /api/q/health
-              port: 8080
+              port: 80
             timeoutSeconds: 5
             initialDelaySeconds: 15
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 80
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /api/q/health
-              port: 8080
+              port: 80
             timeoutSeconds: 5
             initialDelaySeconds: 60
             periodSeconds: 120
@@ -46,8 +46,8 @@ metadata:
 
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
       protocol: TCP
   selector:
     app: beamvr-app

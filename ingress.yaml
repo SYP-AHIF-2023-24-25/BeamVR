@@ -15,11 +15,11 @@ spec:
               service:
                 name: beamvr-app
                 port:
-                  number: 8080
+                  number: 80
           - path: /e.plakolb/(.*)$
             pathType: Prefix
             backend:
               service:
                 name: beamvr-app
                 port:
-                  number: 8080
+                  number: 80
