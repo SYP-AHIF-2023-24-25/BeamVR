@@ -25,7 +25,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     public autoScrollActive: boolean = false;
     private timer: any;
 
-    vrImageSrc: string = '../assets/black.png';
+    vrImageSrc: string = 'assets/black.png';
 
     constructor(private cdr: ChangeDetectorRef) {}
 
@@ -69,7 +69,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     }
 
     fetchHighscores(): void {
-        const url = `../api/get-data?mode=${this.selectedHighscore}`;
+        const url = `api/get-data?mode=${this.selectedHighscore}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
