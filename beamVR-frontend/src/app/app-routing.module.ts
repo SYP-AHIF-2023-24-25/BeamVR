@@ -5,7 +5,7 @@ import {ScoresComponent} from "./scores/scores.component";
 import {HighestLatestScores} from "./highest-latest-scores/highest-latest-scores.component";
 import {AdminComponent} from "./admin/admin.component";
 
-const routes: Routes = [
+export const routes: Routes = [
     {path: "", redirectTo: 'login', pathMatch: 'full'},
     {path: "login", component: LoginComponent},
     {path: "scores", component: ScoresComponent},
