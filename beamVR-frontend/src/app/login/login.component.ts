@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {KeycloakService} from "keycloak-angular";
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-login',
@@ -8,11 +10,32 @@ import {KeycloakService} from "keycloak-angular";
 })
 export class LoginComponent {
     isLoggedIn = false;
+    errorMessage: string = '';
 
-    constructor(private keycloakService: KeycloakService) {
+    constructor(private keycloakService: KeycloakService, private cookieService: CookieService, private router: Router) {
+        const navigation = this.router.getCurrentNavigation();
+        const state = navigation && navigation.extras && navigation.extras.state;
+    
+        if (state && state['error']) {
+            if (state['error'] === 'untrusted') {
+                this.errorMessage = 'Sorry, but you are not authorized to view this page!';
+                this.logout();
+            } if(state['error'] === 'notLoggedIn'){
+                this.errorMessage = 'Please login to view this page!';
+            } else {
+                this.errorMessage = 'An error occurred. Please try again.';
+            }
+        }
+        if(state && state['loggedOut']){
+            this.errorMessage = 'You have been logged out!';
+        }
+    
         this.isLoggedIn = this.keycloakService.isLoggedIn();
         this.keycloakService.getToken().then(token => {
-            console.log(token);
+            this.cookieService.set('token', token);
+            if(this.isLoggedIn){
+                this.router.navigate(['/admin']);
+            }
         });
     }
 

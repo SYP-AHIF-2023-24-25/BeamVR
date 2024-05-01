@@ -2,6 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { HttpHeaders } from '@angular/common/http';
+import {KeycloakService} from "keycloak-angular";
 
 interface UserData {
     tadeotId: string;
@@ -21,12 +24,14 @@ export class AdminComponent implements OnInit, OnDestroy {
     isLoggedIn = false
     data: UserData[] = [];
     subscriptions: Subscription = new Subscription();
+    username: string = '';
+    justLoggedOut: boolean = false;
 
-    constructor(private router: Router, private http: HttpClient) { }
+    constructor(private keycloakService: KeycloakService, private router: Router, private http: HttpClient, private cookieService: CookieService) { }
 
     ngOnInit(): void {
-        // this.checkSession();
-        this.fetchData();
+        this.checkSession();
+        //this.fetchData();
     }
 
     ngOnDestroy(): void {
@@ -34,21 +39,51 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     checkSession(): void {
+        if(this.justLoggedOut){ // if the user just logged out, don't check the session and redirect to login page
+            this.router.navigate(['/login'], { state: { error: 'loggedOut' } });
+        }
+
+        const ServerURL = 'http://localhost:3000';
+
+        const token = this.cookieService.get('token');
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
         this.subscriptions.add(
-            this.http.get<{ status: number }>('/api/checkSession', {
-                withCredentials: true
+            this.http.get(ServerURL+'/api/checkSession', {
+                headers: headers,
+                responseType: 'json'
             }).subscribe({
-                next: res => {
-                    if (res.status === 200) {
+                next: (jsonRes: any) => {
+                    console.log('Server response:', jsonRes); // log the response from the server for debugging
+        
+                    // If a User is not in the trusted list, he will be logged out again, because he is not authorized to view the admin page
+                    if (jsonRes.message && jsonRes.message === "untrusted") {
+                        console.log('Untrusted token'); // is correctly shown in the console
+                        this.logout(); // not working
+
+                        // Commented because of endless loop between login and admin page (because angular is to incompetent to log the user out, so he wont get redirected to the admin page again)
+                        //this.router.navigate(['/login'], { state: { error: 'untrusted' } }); // Redirect to login page
+                    }
+
+                    // If the user is in the trusted list, he will be logged in and can view the admin page
+                    if (jsonRes.status === 200 && jsonRes.message === "trusted") {
+                        this.username = jsonRes.name;
                         this.isLoggedIn = true;
                     } else {
-                        this.isLoggedIn = false;
-                        this.router.navigate(['/login']);
+                        // if is to temperary fix the endless loop between login and admin page when the user is not in the trusted list
+                        if(jsonRes.message !== "untrusted"){
+                            // just move the user to login page (probably not logged in)
+                            this.isLoggedIn = false;
+                            this.router.navigate(['/login'], { state: { error: 'notLoggedIn' } }); // Redirect to login page
+                        }   
                     }
                 },
-                error: () => {
+                error: (err) => { // Catch Errors
+                    if(this.isLoggedIn){ // log out if any error occurs
+                        this.logout();
+                    }
                     this.isLoggedIn = false;
-                    this.router.navigate(['/login']);
+                    this.router.navigate(['/login'], { state: { error: 'unknown' } }); // Redirect to login page and show error message
                 }
             })
         );
@@ -136,15 +171,15 @@ export class AdminComponent implements OnInit, OnDestroy {
         item.editMode = false; // Disable edit mode on successful update
     }
 
-    logout(): void {
-        this.subscriptions.add(
-            this.http.get('/api/logout', {
-                withCredentials: true
-            }).subscribe(() => {
-                this.isLoggedIn = false;
-                this.router.navigate(['/login']);
-            })
-        );
+    async logout(): Promise<void> {
+        // only working for trusted users, if a user is untrusted, nothing happens
+        // Also Angular is showing a Error message on the login page after the user is correctly logged out
+
+        if (!this.isLoggedIn) {
+            return;
+        }
+        this.justLoggedOut = true;
+        await this.keycloakService.logout();
     }
 
     changeThemeColor(event: any): void {

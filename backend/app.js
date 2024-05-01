@@ -355,7 +355,7 @@ app.put("/update-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
 });
 
 // protected test endpoint, use jwt from helper to authenticate
-app.get("/protected", (req, res) => {
+app.get("/api/checkSession", (req, res) => {
   helper.checkJWT(req, res);
 });
 

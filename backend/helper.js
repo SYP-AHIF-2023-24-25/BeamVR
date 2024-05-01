@@ -187,27 +187,20 @@ async function checkJWT(req, res) {
     return res.status(401).json({ message: "Invalid token" }); // If Error, token is invalid, return 401 - Unauthorized
   }
 
-  // just some more checks
-  if (!decodedData) {
-    return res.status(401).json({ message: "Invalid token" }); // if not decodeable return 401 - Unauthorized
-  }
-
-  // check "exp" for expiration time
-  if (decodedData.exp < Date.now() / 1000) {
-    return res.status(401).json({ message: "Token expired" }); // if token expired return 401 - Unauthorized
-  }
-
+  // get studentID and name from JWT after verifying
   const studentID = decodedData.preferred_username; // get studentID from JWT
   const name = decodedData.name; // get name of person from JWT
 
   // check if user is trusted
   const status = isTrustedUser(studentID) ? 200 : 401; // Check if user is trusted (admin)
 
+  //console.log(`User ${name} with studentID ${studentID} is ${status === 200 ? "trusted" : "untrusted"}`); //DEV
+
   // add message to json depending on status
   if (status === 200) {
-    res.status(status).json({ name, status, message: "trusted" });
+    res.status(200).json({ name, status, message: "trusted" });
   } else {
-    res.status(status).json({ name, status, message: "untrusted" });
+    res.status(200).json({ status, message: "untrusted" });
   }
 }
 

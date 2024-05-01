@@ -6,6 +6,9 @@
         </div>
 
         <div class="card-body">
+            <div *ngIf="errorMessage" class="error">
+                <h3>{{ errorMessage }}</h3><br>
+              </div>
             <form id="loginForm">
                 @if (isLoggedIn){
                     <button type="submit" (click)="logout()">Logout</button>
