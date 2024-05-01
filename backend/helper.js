@@ -1,9 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const jwt = require("jsonwebtoken");
-const jwksClient = require('jwks-rsa');
+const jwksClient = require("jwks-rsa");
 
 let trustedUsers = [];
+
+const baseUrl = "https://auth.htl-leonding.ac.at";
+const realm = "htl-leonding";
 
 // create log file with starting date and time as filename in the logs folder
 const logFileName = `logs/${new Date()
@@ -17,8 +20,6 @@ const logFileName = `logs/${new Date()
   .split(".")[0]
   .replace(/:/g, "-")}.log`;
 
-const JWTsecret = "AkIRaaboJ23Q64jSjtN9gkmfMumUybD8";
-
 // log absolute path of the log file
 let absolutePathLogFile = path.join(__dirname, logFileName);
 console.log(`Log file created at ${absolutePathLogFile}`);
@@ -31,50 +32,37 @@ function logToFile(message) {
 }
 
 // function to verify JWT token
-function jwtVerify (token, getKey) {
+function jwtVerify(token, getKey) {
   return new Promise((resolve, reject) => {
-      jwt.verify(token, getKey, (err, decoded) => {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(decoded);
-          }
-      });
+    jwt.verify(token, getKey, (err, decoded) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(decoded);
+      }
+    });
   });
 }
 
 // function to get JWKs client
 function getJwksClient(baseUrl, realm) {
   return jwksClient({
-      jwksUri: `${baseUrl}/realms/${realm}/protocol/openid-connect/certs`
+    jwksUri: `${baseUrl}/realms/${realm}/protocol/openid-connect/certs`,
   });
 }
 
 // function to get signing key
-function getKey(client, header, callback) {
-  client.getSigningKey(header.kid, (err, key) => {
-      const signingKey = key.publicKey || key.rsaPublicKey;
-      callback(null, signingKey);
+function getKey(client, header) {
+  return new Promise((resolve, reject) => {
+      client.getSigningKey(header.kid, (err, key) => {
+          if (err) {
+              reject(err);
+          } else {
+              const signingKey = key.publicKey || key.rsaPublicKey;
+              resolve(signingKey);
+          }
+      });
   });
-}
-
-// function to verify JWT token
-function decodeJWT(req, res, next) {
-  let token = req.headers["authorization"];
-  if (!token) {
-    return res.status(401).send("Access denied. No token provided.");
-  }
-
-  try {
-    // Remove Bearer from string before decoding
-    token = token.replace("Bearer ", "");
-    // decode token and get userData
-    const decoded = jwt.decode(token);
-    return decoded;
-  } catch (ex) {
-    console.log(ex);
-    return null;
-  }
 }
 
 // function to get DateTime as dd.mm.yyyy hh:mm:ss
@@ -155,12 +143,16 @@ function loadTrustedUsers() {
     trustedUsers.push(line);
     count++;
   }
-  if(count > 0) {
-  console.log("Loaded " + count + " trusted users from file!");
-  logToFile("Loaded " + count + " trusted users from file!");
-  }else{
-    console.log("No trusted users found in file! Please define at least one trusted user in trustedUsers.csv");
-    logToFile("No trusted users found in file! Please define at least one trusted user in trustedUsers.csv");
+  if (count > 0) {
+    console.log("Loaded " + count + " trusted users from file!");
+    logToFile("Loaded " + count + " trusted users from file!");
+  } else {
+    console.log(
+      "No trusted users found in file! Please define at least one trusted user in trustedUsers.csv"
+    );
+    logToFile(
+      "No trusted users found in file! Please define at least one trusted user in trustedUsers.csv"
+    );
     console.log("Exiting...");
     logToFile("Exiting...");
     process.exit(1);
@@ -179,14 +171,24 @@ function isTrustedUser(studentID) {
   return false;
 }
 
-function checkJWT(req, res) {
+async function checkJWT(req, res) {
   if (!req.headers.authorization) {
     return res.status(401).json({ message: "No token provided" }); // check if Auth Bearer is set, if not return 401 - Unauthorized
   }
 
-  const decodedData = decodeJWT(req, res); // decode JWT token
+  // Remove Bearer from string
+  const token = req.headers.authorization.replace("Bearer ", ""); // remove "Bearer" from token
+  let decodedData;
+  try {
+    const client = getJwksClient(baseUrl, realm); // get JWKs client
+    const key = await getKey(client, jwt.decode(token, {complete: true}).header); // get signing key
+    decodedData = await jwtVerify(token, key); // verify token
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" }); // If Error, token is invalid, return 401 - Unauthorized
+  }
 
-  if(!decodedData) {
+  // just some more checks
+  if (!decodedData) {
     return res.status(401).json({ message: "Invalid token" }); // if not decodeable return 401 - Unauthorized
   }
 
@@ -203,9 +205,9 @@ function checkJWT(req, res) {
 
   // add message to json depending on status
   if (status === 200) {
-    res.status(status).json({name, status, message: "trusted" });
+    res.status(status).json({ name, status, message: "trusted" });
   } else {
-    res.status(status).json({name, status, message: "not trusted" });
+    res.status(status).json({ name, status, message: "untrusted" });
   }
 }
 
