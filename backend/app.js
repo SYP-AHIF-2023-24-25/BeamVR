@@ -198,7 +198,7 @@ app.get(PREFIX + "/get-user-image", async (req, res) => {
       imageStream.data.pipe(res);
     } else {
       const defaultImageStream = fs.createReadStream(
-        "./public/media/userpic-Placeholder.jpg"
+        __dirname + "/public/media/userpic-Placeholder.jpg"
       );
       defaultImageStream.pipe(res);
     }
