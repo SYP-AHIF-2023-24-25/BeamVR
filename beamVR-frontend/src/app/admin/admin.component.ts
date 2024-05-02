@@ -43,13 +43,11 @@ export class AdminComponent implements OnInit, OnDestroy {
             this.router.navigate(['/login'], { state: { error: 'loggedOut' } });
         }
 
-        const ServerURL = 'http://localhost:3000';
-
         const token = this.cookieService.get('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     
         this.subscriptions.add(
-            this.http.get(ServerURL+'/api/checkSession', {
+            this.http.get('/api/checkSession', {
                 headers: headers,
                 responseType: 'json'
             }).subscribe({
