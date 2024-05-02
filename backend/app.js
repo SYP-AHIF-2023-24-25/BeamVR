@@ -20,6 +20,7 @@ const app = express();
 const ENABLE_HTTPS = false;
 const ServerBaseURL = "https://vps-81d09b41.vps.ovh.net";
 const AngularPORT = 4200;
+const PREFIX = "/api";
 
 // Object to store the active sessions of users
 let activeSessions = [];
@@ -151,12 +152,12 @@ if (fs.existsSync(absolutePath)) {
 }
 
 // Endpoint which redirects convieniently to the angualar frontend
-app.get("/", (req, res) => {
+app.get(PREFIX + "/", (req, res) => {
   res.redirect(ServerBaseURL + ":" + AngularPORT);
 });
 
 // Route to load data from the database
-app.get("/get-data", (req, res) => {
+app.get(PREFIX + "/get-data", (req, res) => {
   const result = db.read(); // Read all data
   // transform id to DataID
   result.forEach((element) => {
@@ -166,14 +167,14 @@ app.get("/get-data", (req, res) => {
 });
 
 // Route to search by name
-app.get("/search-data/:name", (req, res) => {
+app.get(PREFIX + "/search-data/:name", (req, res) => {
   const name = req.params.name;
   const result = db.read({ name: name }); // Search data by name
   res.json(result);
 });
 
 // Route to get image from tadeot server
-app.get("/get-user-image", async (req, res) => {
+app.get(PREFIX + "/get-user-image", async (req, res) => {
   try {
     const { filename } = req.query;
 
@@ -207,7 +208,7 @@ app.get("/get-user-image", async (req, res) => {
 });
 
 // Route to receive data for the highscore table
-app.post("/add-data", checkIfRequestIsAuthenticated, (req, res) => {
+app.post(PREFIX + "/add-data", checkIfRequestIsAuthenticated, (req, res) => {
   const newData = req.body;
 
   if (newData) {
@@ -240,7 +241,7 @@ app.post("/add-data", checkIfRequestIsAuthenticated, (req, res) => {
 
 // Route to save PNG images
 app.post(
-  "/saveImage",
+  PREFIX + "/saveImage",
   checkIfRequestIsAuthenticated,
   upload.single("image"),
   (req, res) => {
@@ -272,7 +273,7 @@ app.post(
 );
 
 // Protected Endpoint to delete all data
-app.delete("/delete-data", checkIfRequestIsAuthenticated, (req, res) => {
+app.delete(PREFIX + "/delete-data", checkIfRequestIsAuthenticated, (req, res) => {
   db.deleteAll();
   db.saveToFile("database.db"); // Delete all data and save the database to a file to overrite the old data
   helper.broadcastMessage(ws, "updateHighscores");
@@ -281,7 +282,7 @@ app.delete("/delete-data", checkIfRequestIsAuthenticated, (req, res) => {
 });
 
 // Protected Endpoint to delete data by ID
-app.delete("/delete-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
+app.delete(PREFIX + "/delete-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
   const ParamID = req.params.id;
 
   const result = db.delete({ id: ParamID }); // Delete data by ID
@@ -297,7 +298,7 @@ app.delete("/delete-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
 });
 
 // Protected Endpoint to update a data entry by id
-app.put("/update-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
+app.put(PREFIX + "/update-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
   const paramID = req.params.id;
   const newData = req.body;
 
@@ -355,7 +356,7 @@ app.put("/update-data/:id", checkIfRequestIsAuthenticated, (req, res) => {
 });
 
 // protected test endpoint, use jwt from helper to authenticate
-app.get("/api/checkSession", (req, res) => {
+app.get(PREFIX + "/api/checkSession", (req, res) => {
   helper.checkJWT(req, res);
 });
 
