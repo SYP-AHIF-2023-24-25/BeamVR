@@ -55,6 +55,7 @@ p {
 .header img {
     width: 25%;
     margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 .header h1 {
@@ -99,4 +100,12 @@ p {
         position: relative;
         margin-top: 5px;
     }
+}
+
+#error {
+    color: #6b0303;
+    font-size: 14px;
+    text-align: center;
+    margin-top: -15px;
+    margin-bottom: 20px;
 }
