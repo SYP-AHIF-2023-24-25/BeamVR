@@ -131,7 +131,8 @@ function broadcastMessage(ws, message) {
 
 // Function to load trusted users from trustedUsers.csv
 function loadTrustedUsers() {
-  const trustedUsersFile = fs.readFileSync("trustedUsers.csv", "utf8");
+  const filePath = path.join(__dirname, "trustedUsers.csv");
+  const trustedUsersFile = fs.readFileSync(filePath, "utf8");
   const trustedUsersLines = trustedUsersFile.split("\n");
 
   let count = 0;

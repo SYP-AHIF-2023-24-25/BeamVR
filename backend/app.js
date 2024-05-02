@@ -20,7 +20,8 @@ const app = express();
 const ENABLE_HTTPS = false;
 const ServerBaseURL = "https://vps-81d09b41.vps.ovh.net";
 const AngularPORT = 4200;
-const PREFIX = "/api";
+//const PREFIX = "/api";
+const PREFIX = "";
 
 // Object to store the active sessions of users
 let activeSessions = [];
