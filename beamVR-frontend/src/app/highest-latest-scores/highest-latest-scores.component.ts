@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {environment} from "../../environment/environment";
 
 interface Highscore {
     image: string;
@@ -69,7 +70,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     }
 
     fetchHighscores(): void {
-        const url = `api/get-data?mode=${this.selectedHighscore}`;
+        const url = environment.apiBaseUrl + `get-data?mode=${this.selectedHighscore}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -138,4 +139,6 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
         return pageData;
     }
+
+    protected readonly environment = environment;
 }

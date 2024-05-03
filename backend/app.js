@@ -81,7 +81,7 @@ app.use((req, res, next) => {
 });
 
 // Use CORS middleware to NOT block requests from other origins
-app.use(cors({}));
+app.use(cors());
 
 // API Key for the API
 const apiKey =
@@ -176,6 +176,7 @@ app.get(PREFIX + "/search-data/:name", (req, res) => {
 
 // Route to get image from tadeot server
 app.get(PREFIX + "/get-user-image", async (req, res) => {
+  res.header("Cross-Origin-Resource-Policy", "cross-origin");
   try {
     const { filename } = req.query;
 
@@ -215,8 +216,7 @@ app.post(PREFIX + "/add-data", checkIfRequestIsAuthenticated, (req, res) => {
   if (newData) {
     newData.tadeotId = newData.tadeotId.toString().padStart(4, "0");
     const imageURL =
-      ServerBaseURL +
-      "/get-user-image?filename=Visitor_" +
+      "Visitor_" +
       newData.tadeotId +
       ".png";
     newData.image = imageURL;
@@ -333,8 +333,7 @@ app.put(PREFIX + "/update-data/:id", checkIfRequestIsAuthenticated, (req, res) =
     // update the image URL with the new tadeotId and pad it to 4 digits
     newData.tadeotId = newData.tadeotId.toString().padStart(4, "0");
     newData.image =
-      ServerBaseURL +
-      "/get-user-image?filename=Visitor_" +
+      "Visitor_" +
       newData.tadeotId +
       ".png";
   }
