@@ -1,14 +1,14 @@
 <section class="container">
     <div class="card">
-
         <div class="header">
             <img id="logo" src="assets/Logo-tranparent.webp" alt="Logo"/>
+            <h1 style="margin-bottom: 15px;">Welcome to BeamVR</h1>
         </div>
 
         <div class="card-body">
             <div *ngIf="errorMessage" class="error">
-                <h3>{{ errorMessage }}</h3><br>
-              </div>
+                <p id="error">{{ errorMessage }}</p>
+            </div>
             <form id="loginForm">
                 @if (isLoggedIn){
                     <button type="submit" (click)="logout()">Logout</button>
