@@ -1,4 +1,6 @@
 import { Component, OnInit } from "@angular/core";
+import { environment } from '../../environment/environment';
+
 
 interface DataItem {
     image: string;
@@ -28,7 +30,7 @@ export class ScoresComponent implements OnInit {
     }
 
     fetchHighscores(): void {
-        this.fetchData("api/get-data")
+        this.fetchData(environment.apiBaseUrl + "get-data")
             .then(data => {
                 this.highscores = data.sort((a, b) => b.score - a.score);
             })
@@ -38,7 +40,7 @@ export class ScoresComponent implements OnInit {
     searchByName(): void {
         if (!this.searchValue) return;
         this.searchInitiated = true;
-        this.fetchData(`api/search-data/${this.searchValue}`)
+        this.fetchData(environment.apiBaseUrl + `search-data/${this.searchValue}`)
             .then(data => {
                 this.searchResults = data && data.length > 0 ? data : [];
             })
@@ -86,4 +88,6 @@ export class ScoresComponent implements OnInit {
         const startIndex = this.currentPage * this.pageSize;
         return this.highscores.slice(startIndex, startIndex + this.pageSize);
     }
+
+    protected readonly environment = environment;
 }

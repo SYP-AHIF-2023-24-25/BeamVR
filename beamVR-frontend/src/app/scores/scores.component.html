@@ -23,7 +23,7 @@
                         <tbody>
                         <tr *ngFor="let item of paginatedData; let i = index">
                             <td>{{ i + 1 + currentPage * pageSize }}</td>
-                            <td><img [src]="item.image" alt="UserImage" class="img-thumbnail"></td>
+                            <td><img [src]="environment.apiBaseUrl + 'get-user-image?filename=' + item.image" alt="UserImage" class="img-thumbnail"></td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.score }}</td>
                         </tr>
@@ -57,7 +57,7 @@
                         </thead>
                         <tbody>
                         <tr *ngFor="let result of searchResults">
-                            <td><img [src]="result.image" alt="UserImage" class="img-thumbnail"></td>
+                            <td><img [src]="environment.apiBaseUrl + 'get-user-image?filename=' + result.image" alt="UserImage" class="img-thumbnail"></td>
                             <td>{{ result.name }}</td>
                             <td>{{ result.score }}</td>
                         </tr>
