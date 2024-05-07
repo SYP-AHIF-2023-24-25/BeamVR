@@ -8,14 +8,11 @@
 
         <div class="card-body">
             <div>
-                <!-- <input id="darkmodeToggle" (change)="changeThemeColor()" name="switch" type="checkbox"
-                       class="switch__input">
-                <label class="switch__label" for="darkmodeToggle"></label> -->
-
                 <div class="header">
                     <h2>{{ highscoreTableTitle }}</h2>
                     <h2>Live feed</h2>
                 </div>
+
                 <label id="auto-scrolling">
                     <input type="checkbox" [(ngModel)]="autoScrollActive" (change)="toggleAutoScroll()">
                     <p>Automatic scrolling</p>
@@ -32,20 +29,23 @@
                                 <th>Score</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr *ngFor="let item of paginatedData; let i = index">
-                                <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ i + 1 + currentPage * pageSize }}</td>
-                                <td><img [style.opacity]="item.image === '#' ? '0' : '1'" [src]="environment.apiBaseUrl + 'get-user-image?filename=' + item.image" alt="User Image" class="img-thumbnail"></td>
-                                <td>{{ item.name }}</td>
+                            <tbody *ngIf="paginatedData && paginatedData.length > 0">
+                            <tr *ngFor="let item of paginatedData; trackBy: trackItem">
+                                <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
+                                <td>
+                                    <img [style.opacity]="item.image === '#' ? '0' : '1'"
+                                         [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId">
+                                </td>
+                                <td>{{ item.username }}</td>
                                 <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
                             </tr>
                             </tbody>
                         </table>
                         <div class="pagination">
                             <button (click)="previousPage()" [disabled]="currentPage === 0"><i
-                                class="fas fa-arrow-left"></i>
+                                    class="fas fa-arrow-left"></i>
                             </button>
-                            <button (click)="nextPage()" [disabled]="currentPage >= (highscores.length / pageSize) - 1">
+                            <button (click)="nextPage()" [disabled]="currentPage >= (users.length / pageSize) - 1">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -57,11 +57,10 @@
         </div>
 
         <div class="navigation">
+            <button routerLink="/login">Back to login</button>
             <button routerLink="/scores">Show all scores</button>
-            <button *ngIf="selectedHighscore === 'latest'" (click)="switchToHS('allTime')">Switch to best highscores
-            </button>
-            <button *ngIf="selectedHighscore === 'allTime'" (click)="switchToHS('latest')">Switch to latest highscores
-            </button>
+            <button *ngIf="selectedHighscore === 'latest'" (click)="switchHighscore('best')">Switch to best highscores</button>
+            <button *ngIf="selectedHighscore === 'best'" (click)="switchHighscore('latest')">Switch to latest highscores</button>
         </div>
         <div class="footer">
             <span>A project by students of &nbsp;<a href="https://www.htl-leonding.at/">HTL Leonding</a>&nbsp;- © BeamVR 2024 / 25</span>

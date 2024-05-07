@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import {environment} from "../../environment/environment";
+import { environment } from "../../environment/environment";
 
-interface Highscore {
-    image: string;
-    dateTime: string;
-    name: string;
+interface User {
+    tadeotId: number;
+    rank: number;
+    image?: string;
+    username: string;
     score: number;
 }
 
@@ -14,14 +15,14 @@ interface Highscore {
     styleUrls: ['./highest-latest-scores.component.css']
 })
 export class HighestLatestScores implements OnInit, OnDestroy {
-    public selectedHighscore: 'allTime' | 'latest' = 'latest';
+    public users: User[] = [];
+
+    public selectedHighscore: 'best' | 'latest' = 'best';
     public highscoreTableTitle: string = 'Best Highscores';
 
     public isConnectionLost: boolean = false;
 
-    public displayedHighscores: Highscore[] = [];
     public currentPage: number = 0;
-    public highscores: Highscore[] = [];
     public pageSize: number = 3;
     public autoScrollActive: boolean = false;
     private timer: any;
@@ -31,12 +32,47 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     constructor(private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
-        this.connectWebSocket();
-        this.fetchHighscores();
+        this.displayScores();
     }
 
     ngOnDestroy(): void {
         this.stopAutoScroll();
+    }
+
+    async fetchBestHighscores() {
+        try {
+            const res = await fetch(environment.apiBaseUrl + 'scores/getBestUsers');
+            if (!res.ok) {
+                new Error(`Status: ${res.status}`);
+            }
+            const users = await res.json();
+            console.log('Users fetched:', users);
+            return users;
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error('Failed to fetch users:', error.message);
+            } else {
+                console.error('An unexpected error occurred:', error);
+            }
+        }
+    }
+
+    async fetchLatestHighscores() {
+        try {
+            const res = await fetch(environment.apiBaseUrl + 'scores/getLatestUsers');
+            if (!res.ok) {
+                new Error(`Status: ${res.status}`);
+            }
+            const users = await res.json();
+            console.log('Users fetched:', users);
+            return users;
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error('Failed to fetch users:', error.message);
+            } else {
+                console.error('An unexpected error occurred:', error);
+            }
+        }
     }
 
     toggleAutoScroll(): void {
@@ -58,63 +94,32 @@ export class HighestLatestScores implements OnInit, OnDestroy {
         }
     }
 
-    switchToHS(mode: 'allTime' | 'latest'): void {
+    switchHighscore(mode: 'best' | 'latest'): void {
         this.selectedHighscore = mode;
-        this.highscoreTableTitle = mode === 'allTime' ? 'Best Highscores' : 'Latest Highscores';
-        this.fetchHighscores();
+        this.highscoreTableTitle = mode === 'best' ? 'Best Highscores' : 'Latest Highscores';
         this.cdr.detectChanges();
+        this.displayScores();
     }
 
-    changeThemeColor(): void {
-        document.body.classList.toggle('dark-theme');
-    }
-
-    fetchHighscores(): void {
-        const url = environment.apiBaseUrl + `get-data?mode=${this.selectedHighscore}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                this.highscores = data;
-                this.sortHighscores();
-                this.displayedHighscores = this.highscores;
-            })
-            .catch(error => {
-                console.error("Error fetching highscores:", error);
-                this.isConnectionLost = true;
+    private displayScores(): void {
+        if (this.selectedHighscore === 'best') {
+            this.fetchBestHighscores().then((users) => {
+                if (users) {
+                    this.users = users;
+                }
             });
-    }
-
-    sortHighscores(): void {
-        if (this.highscores && Array.isArray(this.highscores)) {
-            if (this.selectedHighscore === 'allTime') {
-                this.highscores.sort((a, b) => parseInt(String(b.score)) - parseInt(String(a.score)));
-            } else if (this.selectedHighscore === 'latest') {
-                this.highscores.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
-            }
+        } else {
+            this.fetchLatestHighscores().then((users) => {
+                if (users) {
+                    this.users = users;
+                }
+            });
         }
-    }
-
-    connectWebSocket(): void {
-        const websocket = new WebSocket("wss://vps-81d09b41.vps.ovh.net");
-        websocket.onopen = () => this.isConnectionLost = false;
-        websocket.onclose = websocket.onerror = () => {
-            this.isConnectionLost = true;
-            setTimeout(() => this.connectWebSocket(), 3000);
-        };
-        websocket.onmessage = (event) => {
-            if (typeof event.data === 'string' && event.data === 'updateHighscores') {
-                this.fetchHighscores();
-            } else if (event.data instanceof Blob) {
-                const reader = new FileReader();
-                reader.onload = () => this.vrImageSrc = reader.result as string;
-                reader.readAsDataURL(event.data);
-            }
-        };
     }
 
     public nextPage(): void {
         const nextPage = this.currentPage + 1;
-        const maxPage = Math.ceil(this.highscores.length / this.pageSize) - 1;
+        const maxPage = Math.ceil(this.users.length / this.pageSize) - 1;
         if (nextPage > maxPage) {
             this.currentPage = 0;
         } else {
@@ -129,15 +134,19 @@ export class HighestLatestScores implements OnInit, OnDestroy {
         }
     }
 
-    public get paginatedData(): Highscore[] {
+    public get paginatedData(): User[] {
         const startIndex = this.currentPage * this.pageSize;
-        const pageData = this.highscores.slice(startIndex, startIndex + this.pageSize);
+        const pageData = this.users.slice(startIndex, startIndex + this.pageSize);
 
         while (pageData.length < this.pageSize) {
-            pageData.push({ image: '#', dateTime: 'N/A', name: '', score: -1 }); // Updated placeholder object
+            pageData.push({rank: 0, tadeotId: 0, image: '#', username: "", score: -1 });
         }
 
         return pageData;
+    }
+
+    trackItem(item: any): number {
+        return item.id;
     }
 
     protected readonly environment = environment;
