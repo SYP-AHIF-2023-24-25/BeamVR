@@ -47,6 +47,7 @@ export class ScoresComponent implements OnInit, OnDestroy {
             }
             return await res.json();
         } catch (error) {
+            console.log(environment.apiBaseUrl + 'scores/getUsers')
             console.error('Failed to fetch users:', error);
         }
     }

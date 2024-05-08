@@ -154,7 +154,7 @@ class UserRouter {
             } catch (err) {
                 // read and send the default image
                 let path = require('path');
-                res.sendFile(path.resolve('public/media/userpic-Placeholder.jpg'));
+                res.sendFile(path.resolve(__dirname + '/../public/media/userpic-Placeholder.jpg'));
             }
         });
     }
