@@ -99,7 +99,11 @@ class UserRouter {
 
                         res.status(201).json({message: `A user with userId ${lastID} has been added.`});
                         // notify all clients about new user
-                        this.io.emit('userAdded', {userId: lastID, username: req.body.username});
+                        let tadeotId = parseInt(req.body.tadeotId);
+                        let username = req.body.username;
+                        let rank = req.body.rank;
+                        let score = req.body.score;
+                        this.io.emit('userAdded', {tadeotId: tadeotId, username: username, rank: rank, score: score});
                     } catch (error) {
                         console.error('Error during rank update or commit:', error.message);
                         await this.db.run('ROLLBACK');

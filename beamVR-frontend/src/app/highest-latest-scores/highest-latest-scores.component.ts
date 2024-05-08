@@ -1,13 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { environment } from "../../environment/environment";
-
-interface User {
-    tadeotId: number;
-    rank: number;
-    image?: string;
-    username: string;
-    score: number;
-}
+import { User } from '../../models/user.model';
+import { SocketService } from '../../services/socket-service.service';
 
 @Component({
     selector: 'app-main',
@@ -29,14 +23,21 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
     vrImageSrc: string = 'assets/black.png';
 
-    constructor(private cdr: ChangeDetectorRef) {}
+    constructor(private cdr: ChangeDetectorRef, private socketService: SocketService) {}
 
     ngOnInit(): void {
         this.displayScores();
+
+        // subscribe to the user added event using SocketService
+        this.socketService.onUserAdded((newUser: User) => {
+            this.users.push(newUser);
+            this.displayScores();
+        });
     }
 
     ngOnDestroy(): void {
         this.stopAutoScroll();
+        this.socketService.disconnect();
     }
 
     async fetchBestHighscores() {
@@ -106,12 +107,14 @@ export class HighestLatestScores implements OnInit, OnDestroy {
             this.fetchBestHighscores().then((users) => {
                 if (users) {
                     this.users = users;
+                    console.log('users best:', this.users);
                 }
             });
         } else {
             this.fetchLatestHighscores().then((users) => {
                 if (users) {
                     this.users = users;
+                    console.log('users latest:', this.users);
                 }
             });
         }
