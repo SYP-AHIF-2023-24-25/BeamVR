@@ -1,20 +1,14 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import { environment } from '../../environment/environment';
-
-interface User {
-    tadeotId: number;
-    rank: number;
-    image?: string;
-    username: string;
-    score: number;
-}
+import { SocketService } from '../../services/socket-service.service';
+import { User } from '../../models/user.model';
 
 @Component({
     selector: "app-scores",
     templateUrl: "./scores.component.html",
     styleUrls: ["./scores.component.css"],
 })
-export class ScoresComponent implements OnInit {
+export class ScoresComponent implements OnInit, OnDestroy {
     public users: User[] = [];
     public connectionLost: boolean = false;
 
@@ -25,7 +19,7 @@ export class ScoresComponent implements OnInit {
     public searchInitiated: boolean = false;
     public searchValue: string = "";
 
-    constructor() {}
+    constructor(private socketService: SocketService) {}
 
     ngOnInit(): void {
         this.fetchUsers().then((users) => {
@@ -33,6 +27,10 @@ export class ScoresComponent implements OnInit {
                 this.users = users;
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.socketService.disconnect();
     }
 
     async fetchUsers() {

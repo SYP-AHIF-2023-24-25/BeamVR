@@ -1,11 +1,12 @@
 const express = require('express');
-const {get} = require("axios");
+const { get } = require("axios");
 
 class UserRouter {
-    constructor(db) {
+    constructor(io, db) {
         this.db = db;
         this.router = express.Router();
         this.router.use(express.json());
+        this.io = io;
 
         this.getUsers();
         this.getUser();
@@ -81,30 +82,39 @@ class UserRouter {
 
     async addUser() {
         this.router.post("/addUser", async (req, res) => {
-            this.db.serialize(() => {
-                this.db.run('BEGIN');
-                this.db.run(`INSERT INTO users (tadeotId, username, rank, score) VALUES (?, ?, ?, ?)`,
-                    [req.body.tadeotId, req.body.username, req.body.rank, req.body.score],
-                    (err) => {
-                        if (err) {
-                            this.db.run('ROLLBACK');
-                            res.status(400).json({error: err.message});
-                            return;
-                        }
+            try {
+                await this.db.serialize(async () => {
+                    await this.db.run('BEGIN');
+                    const result = await this.db.run(
+                        `INSERT INTO users (tadeotId, username, rank, score) VALUES (?, ?, ?, ?)`,
+                        [req.body.tadeotId, req.body.username, req.body.rank, req.body.score]
+                    );
 
-                        const lastID = this.lastID;  // Sicherstellen, dass `this` korrekt referenziert wird
-                        this.updateRanks().then(() => {  // Async-Funktion korrekt behandeln
-                            this.db.run('COMMIT');
-                            res.status(201).json({message: `A user with userId ${lastID} has been added.`});
-                        }).catch(error => {
-                            this.db.run('ROLLBACK');
-                            res.status(500).json({error: error.message});
-                        });
+                    // id of the last inserted row
+                    const lastID = result.lastID;
+                    try {
+                        // updates user ranks after adding a new user
+                        await this.updateRanks();
+                        await this.db.run('COMMIT');
+
+                        res.status(201).json({message: `A user with userId ${lastID} has been added.`});
+                        // notify all clients about new user
+                        this.io.emit('userAdded', {userId: lastID, username: req.body.username});
+                    } catch (error) {
+                        console.error('Error during rank update or commit:', error.message);
+                        await this.db.run('ROLLBACK');
+                        res.status(500).json({error: error.message});
                     }
-                );
-            });
+                });
+            } catch (err) {
+                console.error('Database operation failed:', err.message);
+                await this.db.run('ROLLBACK');
+                res.status(400).json({error: err.message});
+            }
         });
     }
+
+
 
     async updateRanks() {
         return new Promise((resolve, reject) => {
@@ -113,6 +123,7 @@ class UserRouter {
                     reject(err);
                     return;
                 }
+                // rank is determined by their position in the ordered list (index + 1)
                 let updates = users.map((user, index) => {
                     return new Promise((resolve, reject) => {
                         this.db.run(`UPDATE users SET rank = ? WHERE userId = ?`, [index + 1, user.userId], (err) => {
@@ -149,4 +160,4 @@ class UserRouter {
     }
 }
 
-module.exports = {userRouter: UserRouter};
+module.exports = { userRouter: UserRouter };
