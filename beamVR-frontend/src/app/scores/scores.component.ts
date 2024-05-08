@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { environment } from '../../environment/environment';
 import { SocketService } from '../../services/socket-service.service';
 import { User } from '../../models/user.model';
@@ -27,6 +27,12 @@ export class ScoresComponent implements OnInit, OnDestroy {
                 this.users = users;
             }
         });
+
+        // subscribe to the user added event using SocketService
+        this.socketService.onUserAdded((newUser: User) => {
+            this.users.push(newUser);
+            this.updateSearchResults();
+        });
     }
 
     ngOnDestroy(): void {
@@ -39,20 +45,18 @@ export class ScoresComponent implements OnInit, OnDestroy {
             if (!res.ok) {
                 new Error(`Status: ${res.status}`);
             }
-            const users = await res.json();
-            console.log('Users fetched:', users);
-            return users;
+            return await res.json();
         } catch (error) {
-            if (error instanceof Error) {
-                console.error('Failed to fetch users:', error.message);
-            } else {
-                console.error('An unexpected error occurred:', error);
-            }
+            console.error('Failed to fetch users:', error);
         }
     }
 
     public search(): void {
-        this.searchResults = this.users.filter((user) =>
+        this.updateSearchResults();
+    }
+
+    private updateSearchResults(): void {
+        this.searchResults = this.users.filter(user =>
             user.username.toLowerCase().includes(this.searchValue.toLowerCase())
         );
         this.searchInitiated = true;

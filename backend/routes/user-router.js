@@ -141,7 +141,7 @@ class UserRouter {
     }
 
     async getUserImage() {
-        this.router.get("/getUserImage/:tadeotId", async (req, res) => {
+        await this.router.get("/getUserImage/:tadeotId", async (req, res) => {
             const tadeotId = req.params.tadeotId.padStart(4, '0');
             const imageUrl = `https://tadeot.htl-leonding.ac.at/tadeot-backend-v23/images/Visitor_${tadeotId}.png`;
             try {
