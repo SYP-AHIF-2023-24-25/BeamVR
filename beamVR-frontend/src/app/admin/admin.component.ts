@@ -12,6 +12,8 @@ export class AdminComponent implements OnInit {
     public users: User[] = []
     private socket: Socket | undefined;
 
+    protected editingIndex: number | null = null;
+
     public currentPage: number = 0;
     public pageSize: number = 3;
 
@@ -87,6 +89,35 @@ export class AdminComponent implements OnInit {
         } catch (error) {
             console.error('Error deleting user:', error);
         }
+    }
+
+    startEditing(index: number) {
+        this.editingIndex = index;
+    }
+
+    // update user
+    async saveChanges(index: number) {
+        try {
+            const response = await fetch(environment.apiBaseUrl + `admin/updateUser/${this.users[index].tadeotId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.users[index]),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error updating user:', errorData.error);
+                return;
+            }
+
+            const data = await response.json();
+            console.log('Success:', data.message);
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+        this.editingIndex = null;
     }
 
     public nextPage(): void {

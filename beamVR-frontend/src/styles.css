@@ -39,7 +39,7 @@ body {
     padding: 25px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"]  {
     width: 100%;
     padding: 10px;
     border: 1px solid rgba(189, 189, 189, 0.7);

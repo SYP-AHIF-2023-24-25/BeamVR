@@ -15,19 +15,32 @@
                 </tr>
                 </thead>
                 <tbody *ngIf="paginatedData && paginatedData.length > 0">
-                <tr *ngFor="let item of paginatedData; trackBy: trackItem">
+                <tr *ngFor="let item of paginatedData; let i = index; trackBy: trackItem">
                     <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
                     <td>
                         <img [style.opacity]="item.image === '#' ? '0' : '1'"
                              [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId">
                     </td>
-                    <td>{{ item.username }}</td>
-                    <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
                     <td>
-                        <button [style.opacity]="item.score === -1 ? '0' : '1'">Edit</button>
+                        <ng-container *ngIf="editingIndex === i; else viewModeUsername">
+                            <input [(ngModel)]="item.username" type="text">
+                        </ng-container>
+                        <ng-template #viewModeUsername>{{ item.username }}</ng-template>
                     </td>
                     <td>
-                        <button (click)="deleteUser(item.tadeotId)" class="delete-button" [style.opacity]="item.score === -1 ? '0' : '1'">Delete</button>
+                        <ng-container *ngIf="editingIndex === i; else viewModeScore">
+                            <input [(ngModel)]="item.score" type="number">
+                        </ng-container>
+                        <ng-template #viewModeScore>{{ item.score }}</ng-template>
+                    </td>
+                    <td>
+                        <button *ngIf="editingIndex !== i" [style.opacity]="item.score === -1 ? '0' : '1'"
+                                (click)="startEditing(i)">Edit</button>
+                        <button *ngIf="editingIndex === i" (click)="saveChanges(i)">Save</button>
+                    </td>
+                    <td>
+                        <button (click)="deleteUser(item.tadeotId)" class="delete-button"
+                                [style.opacity]="item.score === -1 ? '0' : '1'">Delete</button>
                     </td>
                 </tr>
                 </tbody>

@@ -103,6 +103,7 @@ class UserRouter {
                         let username = req.body.username;
                         let rank = req.body.rank;
                         let score = req.body.score;
+                        this.io.emit('refresh');
                         this.io.emit('userAdded', {tadeotId: tadeotId, username: username, rank: rank, score: score});
                     } catch (error) {
                         console.error('Error during rank update or commit:', error.message);

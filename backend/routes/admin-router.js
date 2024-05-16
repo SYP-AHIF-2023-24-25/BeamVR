@@ -9,6 +9,7 @@ class AdminRouter {
 
         this.deleteAllUsers();
         this.deleteUser();
+        this.updateUser();
     }
 
     async deleteAllUsers() {
@@ -36,6 +37,23 @@ class AdminRouter {
                         res.status(500).json({error: err.message});
                     } else {
                         res.status(200).json({message: "User deleted"});
+                        this.io.emit('refresh');
+                    }
+                });
+            } catch (err) {
+                res.status(500).json({error: err.message});
+            }
+        });
+    }
+
+    async updateUser() {
+        this.router.put("/updateUser/:tadeotId", async (req, res) => {
+            try {
+                await this.db.run(`UPDATE users SET username = ?, score = ? WHERE tadeotId = ?`, [req.body.username, req.body.score, req.body.tadeotId], (err) => {
+                    if (err) {
+                        res.status(500).json({error: err.message});
+                    } else {
+                        res.status(200).json({message: "User updated"});
                         this.io.emit('refresh');
                     }
                 });

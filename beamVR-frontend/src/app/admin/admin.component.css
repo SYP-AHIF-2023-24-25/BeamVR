@@ -16,3 +16,9 @@
 .delete-button:active {
     background: #502121;
 }
+
+input[type="text"], input[type="number"] {
+    background: none;
+    border: 1px solid black;
+    box-shadow: none;
+}
