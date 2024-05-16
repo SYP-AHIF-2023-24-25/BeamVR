@@ -1,9 +1,8 @@
 <div class="container">
     <div class="card">
-        <div class="card-header">
-            <h3>Welcome</h3>
-        </div>
         <div class="card-body">
+            <h1>Admin - Welcome</h1>
+
             <table>
                 <thead>
                 <tr>
@@ -25,10 +24,10 @@
                     <td>{{ item.username }}</td>
                     <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
                     <td>
-                        <button>Edit</button>
+                        <button [style.opacity]="item.score === -1 ? '0' : '1'">Edit</button>
                     </td>
                     <td>
-                        <button>Delete</button>
+                        <button (click)="deleteUser(item.tadeotId)" class="delete-button" [style.opacity]="item.score === -1 ? '0' : '1'">Delete</button>
                     </td>
                 </tr>
                 </tbody>
@@ -41,7 +40,8 @@
                 </button>
             </div>
 
-            <button style="margin-top: 20px;" routerLink="/login">Back</button>
+            <button (click)="deleteAllUser()" class="delete-button" style="margin-top: 15px;">Delete all</button>
+            <button routerLink="/login">Back</button>
         </div>
     </div>
 </div>

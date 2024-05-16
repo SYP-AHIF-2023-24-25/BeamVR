@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {environment} from "../../environment/environment";
 import {User} from "../../models/user.model";
+import {io, Socket} from "socket.io-client";
 
 @Component({
     selector: 'app-admin',
@@ -9,12 +10,20 @@ import {User} from "../../models/user.model";
 })
 export class AdminComponent implements OnInit {
     public users: User[] = []
+    private socket: Socket | undefined;
 
     public currentPage: number = 0;
     public pageSize: number = 3;
 
     constructor() {
-        console.log("test")
+        this.socket = io(environment.apiBaseUrl);
+        this.socket.on('refresh', (data) => {
+            this.fetchUsers().then((users) => {
+                if (users) {
+                    this.users = users;
+                }
+            });
+        });
     }
 
     ngOnInit(): void {
@@ -34,6 +43,49 @@ export class AdminComponent implements OnInit {
             return await res.json();
         } catch (error) {
             console.error('Failed to fetch users:', error);
+        }
+    }
+
+    async deleteUser(tadeotId: number) {
+        try {
+            const response = await fetch(environment.apiBaseUrl + `admin/deleteUser/${tadeotId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+
+                const errorData = await response.json();
+                console.error('Error deleting user:', errorData.error);
+                return;
+            }
+
+            const data = await response.json();
+            console.log('Success:', data.message);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    }
+
+    async deleteAllUser() {
+        if (!confirm('Are you sure you want to delete all users?')) {
+            return;
+        }
+        try {
+            const response = await fetch(environment.apiBaseUrl + `admin/deleteAllUsers`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+
+                const errorData = await response.json();
+                console.error('Error deleting user:', errorData.error);
+                return;
+            }
+
+            const data = await response.json();
+            console.log('Success:', data.message);
+        } catch (error) {
+            console.error('Error deleting user:', error);
         }
     }
 
@@ -59,7 +111,6 @@ export class AdminComponent implements OnInit {
         while (pageData.length < this.pageSize) {
             pageData.push({rank: 0, tadeotId: 0, image: '#', username: "", score: -1});
         }
-
         return pageData;
     }
 

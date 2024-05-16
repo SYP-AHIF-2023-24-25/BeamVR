@@ -2,3 +2,17 @@
     width: max-content;
     max-width: none;
 }
+
+.card-body {
+    padding: 0.4rem;
+}
+
+.delete-button {
+    background: #5b2727;
+}
+.delete-button:hover {
+    background: #602929;
+}
+.delete-button:active {
+    background: #502121;
+}
