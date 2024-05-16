@@ -31,16 +31,25 @@
                         <ng-container *ngIf="editingIndex === i; else viewModeScore">
                             <input [(ngModel)]="item.score" type="number">
                         </ng-container>
-                        <ng-template #viewModeScore>{{ item.score }}</ng-template>
+                        <ng-template #viewModeScore>
+                            <!-- if score is -1, score should not be shown -->
+                            <span *ngIf="item.score !== -1">{{ item.score }}</span>
+                        </ng-template>
                     </td>
                     <td>
-                        <button *ngIf="editingIndex !== i" [style.opacity]="item.score === -1 ? '0' : '1'"
-                                (click)="startEditing(i)">Edit</button>
+                        <button [disabled]="item.score === -1"
+                                *ngIf="editingIndex !== i"
+                                [style.opacity]="item.score === -1 ? '0' : '1'"
+                                (click)="startEditing(i)">Edit
+                        </button>
                         <button *ngIf="editingIndex === i" (click)="saveChanges(i)">Save</button>
                     </td>
                     <td>
-                        <button (click)="deleteUser(item.tadeotId)" class="delete-button"
-                                [style.opacity]="item.score === -1 ? '0' : '1'">Delete</button>
+                        <button [disabled]="item.score === -1"
+                                (click)="deleteUser(item.tadeotId)"
+                                class="delete-button"
+                                [style.opacity]="item.score === -1 ? '0' : '1'">Delete
+                        </button>
                     </td>
                 </tr>
                 </tbody>
