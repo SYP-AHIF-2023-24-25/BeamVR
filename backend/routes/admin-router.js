@@ -1,11 +1,12 @@
 const express = require("express");
 
 class AdminRouter {
-    constructor(io, db) {
+    constructor(io, db, userRouterObject) {
         this.db = db;
         this.router = express.Router();
         this.router.use(express.json());
         this.io = io;
+        this.userRouter = userRouterObject;
 
         this.deleteAllUsers();
         this.deleteUser();
@@ -36,6 +37,7 @@ class AdminRouter {
                     if (err) {
                         res.status(500).json({error: err.message});
                     } else {
+                        this.userRouter.updateRanks();
                         res.status(200).json({message: "User deleted"});
                         this.io.emit('refresh');
                     }
@@ -53,6 +55,7 @@ class AdminRouter {
                     if (err) {
                         res.status(500).json({error: err.message});
                     } else {
+                        this.userRouter.updateRanks();
                         res.status(200).json({message: "User updated"});
                         this.io.emit('refresh');
                     }

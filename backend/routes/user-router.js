@@ -19,7 +19,7 @@ class UserRouter {
     async getUsers() {
         this.router.get("/getUsers", async (req, res) => {
             try {
-                await this.db.all(`SELECT tadeotId, username, rank, score FROM users`, [], (err, rows) => {
+                await this.db.all(`SELECT tadeotId, username, rank, score FROM users ORDER BY score DESC`, [], (err, rows) => {
                     if (err) {
                         res.status(500).json({error: err.message});
                     } else {
@@ -118,8 +118,6 @@ class UserRouter {
             }
         });
     }
-
-
 
     async updateRanks() {
         return new Promise((resolve, reject) => {

@@ -30,9 +30,11 @@ const io = socketIo(server, {
 });
 
 const userRouter = require('./routes/user-router').userRouter;
-app.use("/scores", (new userRouter(io, db)).getRouter());
+const userRouterObject = new userRouter(io, db);
+app.use("/scores", (userRouterObject.getRouter()));
 
 const adminRouter = require('./routes/admin-router').adminRouter;
-app.use("/admin", (new adminRouter(io, db)).getRouter());
+const adminRouterObject = new adminRouter(io, db, userRouterObject);
+app.use("/admin", (adminRouterObject.getRouter()));
 
 manageDatabase();
