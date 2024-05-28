@@ -10,8 +10,10 @@
                 <p id="error">{{ errorMessage }}</p>
             </div>
             <form id="loginForm">
-                @if (isLoggedIn){
-                    <button routerLink="/admin">Admin Page</button>
+                @if (isLoggedIn) {
+                    @if (isAuthorized) {
+                        <button routerLink="/admin">Admin Page</button>
+                    }
                     <button type="submit" (click)="logout()">Logout</button>
                 } @else {
                     <button type="submit" (click)="login()">Login</button>
