@@ -16,8 +16,11 @@ export class ScoresComponent implements OnInit, OnDestroy {
     public pageSize: number = 3;
 
     public searchResults: User[] = [];
+    public displayedSearchResults: User[] = [];
     public searchInitiated: boolean = false;
     public searchValue: string = "";
+    public placeholders: any[] = [];
+    public searchCurrentPage: number = 0;
 
     constructor(private socketService: SocketService) {}
 
@@ -61,6 +64,20 @@ export class ScoresComponent implements OnInit, OnDestroy {
             user.username.toLowerCase().includes(this.searchValue.toLowerCase())
         );
         this.searchInitiated = true;
+        this.searchCurrentPage = 0; // Reset to first page of search results
+        this.updateDisplayedSearchResults();
+    }
+
+    private updateDisplayedSearchResults(): void {
+        const startIndex = this.searchCurrentPage * this.pageSize;
+        this.displayedSearchResults = this.searchResults.slice(startIndex, startIndex + this.pageSize);
+
+        this.placeholders = [];
+        const placeholdersNeeded = this.pageSize - this.displayedSearchResults.length;
+        for (let i = 0; i < placeholdersNeeded; i++) {
+            this.placeholders.push({ rank: 0, tadeotId: 0, image: '#', username: "", score: -1 });
+        }
+        this.displayedSearchResults = this.displayedSearchResults.concat(this.placeholders);
     }
 
     public nextPage(): void {
@@ -75,6 +92,23 @@ export class ScoresComponent implements OnInit, OnDestroy {
         const prevPage = this.currentPage - 1;
         if (prevPage >= 0) {
             this.currentPage = prevPage;
+        }
+    }
+
+    public nextSearchPage(): void {
+        const nextPage = this.searchCurrentPage + 1;
+        const maxPage = Math.ceil(this.searchResults.length / this.pageSize) - 1;
+        if (nextPage <= maxPage) {
+            this.searchCurrentPage = nextPage;
+            this.updateDisplayedSearchResults();
+        }
+    }
+
+    public previousSearchPage(): void {
+        const prevPage = this.searchCurrentPage - 1;
+        if (prevPage >= 0) {
+            this.searchCurrentPage = prevPage;
+            this.updateDisplayedSearchResults();
         }
     }
 

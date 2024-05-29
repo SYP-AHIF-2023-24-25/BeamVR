@@ -17,6 +17,8 @@ h1 {
 #live-feed {
     width: 500px;
     height: 400px;
+    background: black;
+    border-radius: 8px;
 }
 
 #auto-scrolling {

@@ -9,7 +9,7 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 const memoryStore = new session.MemoryStore();
-const keycloak = new Keycloak({ store: memoryStore });
+const keycloak = new Keycloak({ store: memoryStore }, __dirname + '/keycloak.json');
 
 app.use(cors());
 app.use(express.json());

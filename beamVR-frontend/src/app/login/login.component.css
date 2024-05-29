@@ -3,47 +3,13 @@
 }
 
 .card-body {
-    padding: 15px;
+    padding: 10px;
+    gap: 10px;
 }
 
 p {
     font-size: 15px;
     margin-bottom: 8px;
-}
-
-.form-outline {
-    margin-bottom: 20px;
-}
-
-.form-outline label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.input-group {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-group button {
-    background: none;
-    border: none;
-    position: absolute;
-    right: 10px;
-}
-
-.password-flex {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-#togglePassword {
-    border: none;
-    background: none;
-    cursor: pointer;
-    margin: 0;
 }
 
 .header {
@@ -53,59 +19,30 @@ p {
 }
 
 .header img {
-    width: 25%;
+    width: 40%;
     margin-top: 5px;
     margin-bottom: 10px;
 }
 
 .header h1 {
-    margin: 0;
-    padding: 0;
-    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
 }
 
-/* Responsive Media Queries */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .card {
-        max-width: 80%;
-    }
-
-    .header img {
-        width: 40%;
-    }
-
-    .header h1, p {
-        font-size: 18px;
-    }
-
-    .input-group button, #togglePassword {
-        right: 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .card {
-        max-width: 95%;
+        max-width: 90%;
     }
 
     .header img {
         width: 50%;
     }
 
-    p, .header h1 {
-        font-size: 16px;
+    .header h1 {
+        font-size: 20px;
     }
 
-    .input-group button, #togglePassword {
-        position: relative;
-        margin-top: 5px;
+    p {
+        font-size: 14px;
     }
-}
-
-#error {
-    color: #6b0303;
-    font-size: 14px;
-    text-align: center;
-    margin-top: -15px;
-    margin-bottom: 20px;
 }
