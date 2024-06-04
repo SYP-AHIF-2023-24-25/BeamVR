@@ -13,7 +13,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     public users: User[] = [];
 
     public selectedHighscore: 'best' | 'latest' = 'best';
-    public highscoreTableTitle: string = 'Best Highscores';
+    public highscoreTableTitle: string = 'Best Scores';
 
     public isConnectionLost: boolean = false;
 
@@ -167,7 +167,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
     switchHighscore(mode: 'best' | 'latest'): void {
         this.selectedHighscore = mode;
-        this.highscoreTableTitle = mode === 'best' ? 'Best Highscores' : 'Latest Highscores';
+        this.highscoreTableTitle = mode === 'best' ? 'Best Scores' : 'Latest Scores';
         this.cdr.detectChanges();
         this.displayScores();
     }

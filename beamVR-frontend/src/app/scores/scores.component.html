@@ -1,97 +1,51 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h1 style="margin-bottom: -20px;text-align: center">Scores</h1>
+            <h1 style="margin-bottom: -15px;text-align: center">Scores</h1>
             <div style="border-bottom: 1px solid black;"></div>
 
+            <div class="search">
+                <input type="text" [(ngModel)]="searchValue" placeholder="Search by name" (keyup.enter)="search()" />
+                <button (click)="search()">↩</button>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+                </thead>
+                <tbody *ngIf="currentData && currentData.length > 0">
+                <tr *ngFor="let item of currentData; trackBy: trackItem">
+                    <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
+                    <td>
+                        <img [style.opacity]="item.image === '#' ? '0' : '1'" [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId" alt="placeholder-img">
+                    </td>
+                    <td>{{ item.username }}</td>
+                    <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-button-left" (click)="previousPage()" [disabled]="isFirstPage">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="pagination-button-right" (click)="nextPage()" [disabled]="isLastPage">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Navigation to stream / back to login -->
             <div class="navigation">
                 <div class="back-to-login" routerLink="/">
                     <button>←</button>
                 </div>
                 <button id="show-stream" routerLink="/highest-latest-scores">Show Stream</button>
-            </div>
-
-            <div class="search">
-                <input type="text" [(ngModel)]="searchValue" placeholder="Search by name" />
-                <button (click)="search()">↩</button>
-            </div>
-
-            <div *ngIf="connectionLost" class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">Connection lost</h4>
-            </div>
-
-            <div *ngIf="!searchInitiated || searchResults.length === 0">
-                <!-- Scores table -->
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                    </tr>
-                    </thead>
-                    <tbody *ngIf="paginatedData && paginatedData.length > 0">
-                    <tr *ngFor="let item of paginatedData; trackBy: trackItem">
-                        <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
-                        <td>
-                            <img [style.opacity]="item.image === '#' ? '0' : '1'"
-                                 [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId">
-                        </td>
-                        <td>{{ item.username }}</td>
-                        <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <div class="pagination">
-                    <button class="pagination-button-left" (click)="previousPage()" [disabled]="currentPage === 0">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button class="pagination-button-right" (click)="nextPage()"
-                            [disabled]="currentPage >= (users.length / pageSize) - 1">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div *ngIf="searchInitiated && searchResults.length > 0">
-                <!-- Search results table -->
-                <table id="search-table">
-                    <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                    </tr>
-                    </thead>
-                    <tbody *ngIf="displayedSearchResults && displayedSearchResults.length > 0">
-                    <tr *ngFor="let item of displayedSearchResults; trackBy: trackItem">
-                        <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
-                        <td>
-                            <img [style.opacity]="item.image === '#' ? '0' : '1'"
-                                 [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId">
-                        </td>
-                        <td>{{ item.username }}</td>
-                        <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <div class="pagination">
-                    <button class="pagination-button-left" (click)="previousSearchPage()" [disabled]="searchCurrentPage === 0">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button class="pagination-button-right" (click)="nextSearchPage()"
-                            [disabled]="searchCurrentPage >= (searchResults.length / pageSize) - 1">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div *ngIf="searchInitiated && searchResults.length === 0">
-                <h4>No results</h4>
             </div>
         </div>
         <div class="footer">

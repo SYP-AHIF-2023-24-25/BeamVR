@@ -7,26 +7,17 @@
     flex-direction: column;
     padding: 10px;
     justify-content: center;
-    gap: 25px;
-}
-
-/* to split the content of the search page */
-.search-content-split {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    justify-content: center;
-    align-items: center;
+    gap: 20px;
 }
 
 /* navigation between back to login / live stream */
 .navigation {
     display: flex;
+    margin-top: -20px;
     align-items: center;
     justify-content: space-between;
     border-radius: 50px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    margin-top: 10px;
 }
 
 #show-stream {
@@ -75,6 +66,7 @@
 /* SEARCH */
 
 .search {
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -99,11 +91,9 @@
     font-size: 20px;
 }
 
-#search-table tr th, #search-table tr td {
-    padding: 10px;
-    font-size: 15px;
+table {
+    margin-bottom: -5px;
 }
-
 
 @media (max-width: 480px) {
     .card {

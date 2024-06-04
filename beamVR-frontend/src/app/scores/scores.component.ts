@@ -30,11 +30,9 @@ export class ScoresComponent implements OnInit, OnDestroy {
                 this.users = users;
             }
         });
-
         // subscribe to the user added event using SocketService
         this.socketService.onUserAdded((newUser: User) => {
             this.users.push(newUser);
-            this.updateSearchResults();
         });
     }
 
@@ -46,7 +44,7 @@ export class ScoresComponent implements OnInit, OnDestroy {
         try {
             const res = await fetch(environment.apiBaseUrl + 'scores/getUsers');
             if (!res.ok) {
-                new Error(`Status: ${res.status}`);
+                throw new Error(`Status: ${res.status}`);
             }
             return await res.json();
         } catch (error) {
@@ -56,10 +54,6 @@ export class ScoresComponent implements OnInit, OnDestroy {
     }
 
     public search(): void {
-        this.updateSearchResults();
-    }
-
-    private updateSearchResults(): void {
         this.searchResults = this.users.filter(user =>
             user.username.toLowerCase().includes(this.searchValue.toLowerCase())
         );
@@ -81,34 +75,34 @@ export class ScoresComponent implements OnInit, OnDestroy {
     }
 
     public nextPage(): void {
-        const nextPage = this.currentPage + 1;
-        const maxPage = Math.ceil(this.users.length / this.pageSize) - 1;
-        if (nextPage <= maxPage) {
-            this.currentPage = nextPage;
+        if (this.searchInitiated) {
+            const nextPage = this.searchCurrentPage + 1;
+            const maxPage = Math.ceil(this.searchResults.length / this.pageSize) - 1;
+            if (nextPage <= maxPage) {
+                this.searchCurrentPage = nextPage;
+                this.updateDisplayedSearchResults();
+            }
+        } else {
+            const nextPage = this.currentPage + 1;
+            const maxPage = Math.ceil(this.users.length / this.pageSize) - 1;
+            if (nextPage <= maxPage) {
+                this.currentPage = nextPage;
+            }
         }
     }
 
     public previousPage(): void {
-        const prevPage = this.currentPage - 1;
-        if (prevPage >= 0) {
-            this.currentPage = prevPage;
-        }
-    }
-
-    public nextSearchPage(): void {
-        const nextPage = this.searchCurrentPage + 1;
-        const maxPage = Math.ceil(this.searchResults.length / this.pageSize) - 1;
-        if (nextPage <= maxPage) {
-            this.searchCurrentPage = nextPage;
-            this.updateDisplayedSearchResults();
-        }
-    }
-
-    public previousSearchPage(): void {
-        const prevPage = this.searchCurrentPage - 1;
-        if (prevPage >= 0) {
-            this.searchCurrentPage = prevPage;
-            this.updateDisplayedSearchResults();
+        if (this.searchInitiated) {
+            const prevPage = this.searchCurrentPage - 1;
+            if (prevPage >= 0) {
+                this.searchCurrentPage = prevPage;
+                this.updateDisplayedSearchResults();
+            }
+        } else {
+            const prevPage = this.currentPage - 1;
+            if (prevPage >= 0) {
+                this.currentPage = prevPage;
+            }
         }
     }
 
@@ -117,15 +111,26 @@ export class ScoresComponent implements OnInit, OnDestroy {
         const pageData = this.users.slice(startIndex, startIndex + this.pageSize);
 
         while (pageData.length < this.pageSize) {
-            pageData.push({rank: 0, tadeotId: 0, image: '#', username: "", score: -1 });
+            pageData.push({ rank: 0, tadeotId: 0, image: '#', username: "", score: -1 });
         }
 
         return pageData;
     }
 
-    trackItem(item: any): number {
-        return item.id;
+    public get currentData(): User[] {
+        return this.searchInitiated ? this.displayedSearchResults : this.paginatedData;
     }
+
+    public get isFirstPage(): boolean {
+        return this.searchInitiated ? this.searchCurrentPage === 0 : this.currentPage === 0;
+    }
+
+    public get isLastPage(): boolean {
+        return this.searchInitiated ? this.searchCurrentPage >= (this.searchResults.length / this.pageSize) - 1
+            : this.currentPage >= (this.users.length / this.pageSize) - 1;
+    }
+
+    trackItem(item: any): number { return item.id; }
 
     protected readonly environment = environment;
 }
