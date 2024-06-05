@@ -29,6 +29,14 @@ p {
     margin-bottom: 20px;
 }
 
+.error {
+    color: #5b2727;
+    font-size: 15px;
+    text-align: center;
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 600px) {
     .card {
         max-width: 90%;

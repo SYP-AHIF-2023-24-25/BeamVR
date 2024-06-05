@@ -15,7 +15,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
     public selectedHighscore: 'best' | 'latest' = 'best';
     public highscoreTableTitle: string = 'Best Scores';
 
-    public isConnectionLost: boolean = false;
+    private clickCount = 0;
 
     public currentPage: number = 0;
     public pageSize: number = 3;
@@ -220,6 +220,29 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
     trackItem(item: any): number {
         return item.id;
+    }
+
+    onDivClick(): void {
+        this.clickCount++;
+        if (this.clickCount === 5) {
+            const livestreamDiv = document.querySelector('#livestream-element') as HTMLElement;
+            const livestreamText = document.querySelector("#livestream-text") as HTMLElement;
+            livestreamDiv.style.backgroundColor = 'darkblue';
+            livestreamText.style.textAlign = 'left';
+            livestreamText.style.marginLeft = '10px';
+            livestreamText.innerHTML = `<div style="font-size: 40px">:(</div><br> The stream ran into a problem and needs to restart. <br> 
+                                        We're just collecting some error info, and then we'll restart for you. <br>
+                                        0% complete`;
+
+            // Reset after 5 seconds
+            setTimeout(() => {
+                livestreamDiv.style.backgroundColor = '';
+                livestreamText.style.textAlign = '';
+                livestreamText.innerHTML = `<i class="fa-solid fa-video-slash"></i>`;
+                this.clickCount = 0;
+            }, 5000);
+        }
+        console.log(this.clickCount);
     }
 
     protected readonly environment = environment;

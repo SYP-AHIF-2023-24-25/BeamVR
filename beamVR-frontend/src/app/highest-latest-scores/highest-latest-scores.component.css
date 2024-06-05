@@ -196,4 +196,8 @@
     #auto-scrolling {
         gap: 5px;
     }
+
+    #livestream-text {
+        font-size: 12px;
+    }
 }

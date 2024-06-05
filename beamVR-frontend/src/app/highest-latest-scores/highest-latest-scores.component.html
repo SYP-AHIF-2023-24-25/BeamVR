@@ -5,9 +5,9 @@
             <div style="border-bottom: 1px solid black;"></div>
 
             <div class="scores-stream-split">
-                <div class="livestream">
+                <div class="livestream" (click)="onDivClick()">
                     <video id="livestream-element" type="application/x-mpegURL" crossOrigin="anonymous"></video>
-                    <p><i class="fa-solid fa-video-slash"></i></p>
+                    <p id="livestream-text"><i class="fa-solid fa-video-slash"></i></p>
                 </div>
 
                 <div class="scores">
