@@ -1,24 +1,108 @@
 .card {
-    width: max-content;
-    max-width: none;
+    min-width: max-content;
 }
 
 .card-body {
-    padding: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: center;
+    gap: 20px;
 }
 
-.delete-button {
+#lol {
+    margin-top: 5px;
+    text-align: center;
+}
+
+#header {
+    margin-bottom: -15px;
+    text-align: center;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: row;
+    margin-top: -15px;
+}
+
+#back-to-login {
+    border-radius: 50px 0 0 50px;
+    width: 25%;
+}
+
+#back-to-login:hover {
+    background: rgb(34, 49, 66);
+}
+
+#delete-all-button {
+    border-radius: 0 50px 50px 0;
+}
+
+.delete-button, #delete-all-button {
     background: #5b2727;
 }
-.delete-button:hover {
+
+.delete-button:hover, #delete-all-button:hover {
     background: #602929;
 }
-.delete-button:active {
+
+.delete-button:active, #delete-all-button:active {
     background: #502121;
+}
+
+
+.card-body {
+    padding: 0.4rem;
 }
 
 input[type="text"], input[type="number"] {
     background: none;
     border: 1px solid black;
     box-shadow: none;
+}
+
+.management-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+@media (max-width: 400px) {
+    .card {
+        min-width: 0;
+    }
+
+    #header {
+        margin-bottom: -5px;
+    }
+
+    .card-body {
+        gap: 15px;
+    }
+
+    .navigation {
+        flex-direction: column;
+    }
+
+    #delete-all-button {
+        border-radius: 50px;
+    }
+
+    #back-to-login {
+        width: 100%;
+        border-radius: 50px;
+    }
+
+    th:nth-child(2), td:nth-child(2) {
+        display: none;
+    }
+
+    .management-buttons {
+        flex-direction: column;
+    }
+
+    .management-buttons button {
+        font-size: 10px;
+    }
 }
