@@ -42,7 +42,7 @@ export class HighestLatestScores implements OnInit, OnDestroy {
         });
 
         // VIDEO HLS STREAM
-        let video: HTMLVideoElement = document.getElementById('live-feed') as HTMLVideoElement;
+        let video: HTMLVideoElement = document.getElementById('livestream-element') as HTMLVideoElement;
         let videoSrc = 'http://45.93.251.122:8000/live/gamestream/index.m3u8';
 
         if (Hls.isSupported()) {
