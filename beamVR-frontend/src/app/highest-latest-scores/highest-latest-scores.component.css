@@ -120,10 +120,13 @@
 }
 
 .switch-score-button {
+    border-radius: 0 50px 50px 0;
+}
+
+.switch-score-button, .login-logout-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0 50px 50px 0;
     padding: 10px 20px;
     margin: 0;
     background: rgb(34, 47, 63);
@@ -136,10 +139,8 @@
     background: rgb(34, 49, 66);
 }
 
-.feed-body {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+.login-logout-button {
+    border-radius: 0;
 }
 
 /* Media query for screens with a max-width of 400px */
@@ -199,5 +200,9 @@
 
     #livestream-text {
         font-size: 12px;
+    }
+
+    .login-logout-button {
+        border-radius: 50px;
     }
 }

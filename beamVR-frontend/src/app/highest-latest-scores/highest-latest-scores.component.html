@@ -27,7 +27,7 @@
                             <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.rank }}</td>
                             <td>
                                 <img [style.opacity]="item.image === '#' ? '0' : '1'"
-                                     [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId">
+                                     [src]="environment.apiBaseUrl + 'scores/getUserImage/' + item.tadeotId" alt="placeholder-image">
                             </td>
                             <td>{{ item.username }}</td>
                             <td [style.opacity]="item.score === -1 ? '0' : '1'">{{ item.score }}</td>
@@ -37,8 +37,9 @@
 
                     <!-- pagination to switch between pages of score -->
                     <div class="pagination">
-                        <button class="pagination-button-left" (click)="previousPage()" [disabled]="currentPage === 0"><i
-                                class="fas fa-arrow-left"></i>
+                        <button class="pagination-button-left" (click)="previousPage()" [disabled]="currentPage === 0">
+                            <i
+                                    class="fas fa-arrow-left"></i>
                         </button>
                         <button class="pagination-button-right" (click)="nextPage()"
                                 [disabled]="currentPage >= (users.length / pageSize) - 1">
@@ -58,8 +59,13 @@
                 <div class="back-to-scores" routerLink="/scores">
                     <button>←</button>
                 </div>
-                <!-- TODO change to keycloak login -->
-                <button id="back-to-login" routerLink="/">Login</button>
+
+                <!-- login with keycloak -->
+                @if (isLoggedIn) {
+                    <button class="login-logout-button" type="submit" (click)="logout()">Logout</button>
+                } @else {
+                    <button class="login-logout-button" type="submit" (click)="login()">Login</button>
+                }
                 <!-- enable specific button depending on selected score -->
                 <button class="switch-score-button" *ngIf="selectedHighscore === 'latest'"
                         (click)="switchHighscore('best')">

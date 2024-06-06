@@ -3,6 +3,8 @@ import { environment } from "../../environment/environment";
 import { User } from '../../models/user.model';
 import { SocketService } from '../../services/socket-service.service';
 import Hls from "hls.js";
+import { AuthService } from '../services/auth.service';
+import {KeycloakService} from "keycloak-angular";
 
 @Component({
     selector: 'app-main',
@@ -11,6 +13,8 @@ import Hls from "hls.js";
 })
 export class HighestLatestScores implements OnInit, OnDestroy {
     public users: User[] = [];
+    isAuthorized = false;
+    isLoggedIn = false;
 
     public selectedHighscore: 'best' | 'latest' = 'best';
     public highscoreTableTitle: string = 'Best Scores';
@@ -24,7 +28,9 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
     vrImageSrc: string = 'assets/black.png';
 
-    constructor(private cdr: ChangeDetectorRef, private socketService: SocketService) {}
+    constructor(private cdr: ChangeDetectorRef, private socketService: SocketService,  private authService: AuthService, private keycloakService: KeycloakService) {
+        this.isLoggedIn = this.keycloakService.isLoggedIn();
+    }
 
     ngOnInit(): void {
         this.displayScores();
@@ -243,6 +249,21 @@ export class HighestLatestScores implements OnInit, OnDestroy {
             }, 5000);
         }
         console.log(this.clickCount);
+    }
+
+    async login(): Promise<void> {
+        if (this.isLoggedIn) {
+            return
+
+        }
+        await this.keycloakService.login();
+    }
+
+    async logout(): Promise<void> {
+        if (!this.isLoggedIn) {
+            return;
+        }
+        await this.keycloakService.logout();
     }
 
     protected readonly environment = environment;
