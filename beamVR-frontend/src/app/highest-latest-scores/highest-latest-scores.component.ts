@@ -13,7 +13,6 @@ import {KeycloakService} from "keycloak-angular";
 })
 export class HighestLatestScores implements OnInit, OnDestroy {
     public users: User[] = [];
-    isAuthorized = false;
     isLoggedIn = false;
 
     public selectedHighscore: 'best' | 'latest' = 'best';

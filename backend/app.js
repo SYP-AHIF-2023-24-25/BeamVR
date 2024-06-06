@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTable, db, closeDb } = require('./database');
+const { createTable, db } = require('./database');
 const cors = require('cors');
 const socketIo = require('socket.io');
 const session = require('express-session');
@@ -62,4 +62,4 @@ const adminRouter = require('./routes/admin-router').adminRouter;
 const adminRouterObject = new adminRouter(io, db, userRouterObject);
 app.use("/admin", (adminRouterObject.getRouter()));
 
-manageDatabase();
+await manageDatabase();
