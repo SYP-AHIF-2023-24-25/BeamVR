@@ -11,12 +11,12 @@ export class AuthService {
         return this.keycloakService.isLoggedIn();
     }
 
-    login(): void {
-        this.keycloakService.login();
+    async login(): Promise<void> {
+        await this.keycloakService.login();
     }
 
-    logout(): void {
-        this.keycloakService.logout(window.location.origin);
+    async logout(): Promise<void> {
+        await this.keycloakService.logout(window.location.origin);
     }
 
     async getToken(): Promise<string | null> {

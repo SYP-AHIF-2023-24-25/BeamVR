@@ -26,14 +26,14 @@ export class LoginComponent implements OnInit {
         if (this.isLoggedIn) {
             return;
         }
-        this.authService.login();
+        await this.authService.login();
     }
 
     async logout(): Promise<void> {
         if (!this.isLoggedIn) {
             return;
         }
-        this.authService.logout();
+        await this.authService.logout();
     }
 
     getProtectedResource() {
