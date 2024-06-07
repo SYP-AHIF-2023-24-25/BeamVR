@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTable, db, closeDb } = require('./database');
+const { createTable, db } = require('./database');
 const cors = require('cors');
 const socketIo = require('socket.io');
 const session = require('express-session');

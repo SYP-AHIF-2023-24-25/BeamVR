@@ -15,7 +15,7 @@
     text-align: center
 }
 
-/* to split scores and live stream (row) */
+/* to split scores and live streamstream (row) */
 .scores-stream-split {
     display: flex;
     flex-direction: row;
