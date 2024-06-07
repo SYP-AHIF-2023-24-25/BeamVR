@@ -62,4 +62,4 @@ const adminRouter = require('./routes/admin-router').adminRouter;
 const adminRouterObject = new adminRouter(io, db, userRouterObject);
 app.use("/admin", (adminRouterObject.getRouter()));
 
-await manageDatabase();
+manageDatabase();
