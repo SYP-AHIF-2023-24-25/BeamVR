@@ -43,72 +43,99 @@ export class HighestLatestScores implements OnInit, OnDestroy {
 
         // VIDEO HLS STREAM
         let video: HTMLVideoElement = document.getElementById('livestream-element') as HTMLVideoElement;
-        let videoSrc = 'http://45.93.251.122:8000/live/gamestream/index.m3u8';
+        let videoSrc: string = 'http://45.93.251.122:8000/live/gamestream/index.m3u8';
+        let livestreamText: HTMLElement = document.getElementById('livestream-text') as HTMLElement;
 
-        if (Hls.isSupported()) {
-            var hls = new Hls({
-                maxBufferSize: 0,
-                maxBufferLength: 3,
-                maxMaxBufferLength: 5,
-                liveSyncDurationCount: 1,
-            });
-            hls.loadSource(videoSrc);
-            hls.attachMedia(<HTMLMediaElement>video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                (<HTMLVideoElement>video).play().then(r => console.log('Playing video...')).catch(e => console.error('Failed to play video:', e));
-            });
-            hls.on(Hls.Events.BUFFER_APPENDING, function(event, data) {
-                console.log(`Buffering ${data.data.length} bytes of data.`);
-            });
-
-            // skip video to 2 seconds before live edge if behind 5 seconds
-            hls.on(Hls.Events.FRAG_BUFFERED, function(event, data) {
-                if (hls.media && hls.media.readyState === 4) {
-                    const liveEdge = hls.media.duration - hls.media.currentTime;
-                    if (liveEdge > 2) {
-                        hls.media.currentTime = hls.media.duration - 2;
+        function checkStreamAvailability(): void {
+            fetch(videoSrc, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        livestreamText.style.display = 'none';
+                        initHls();
+                    } else {
+                        livestreamText.style.display = 'block';
+                        setTimeout(checkStreamAvailability, 5000);
                     }
-                }
-            });
-
-            // continue video if live edge is reached and new data is appended
-            hls.on(Hls.Events.FRAG_BUFFERED, function(event, data) {
-                if (hls.media && hls.media.readyState === 4) {
-                    const liveEdge = hls.media.duration - hls.media.currentTime;
-                    hls.media.play();
-                }
-            });
-
-            hls.on(Hls.Events.ERROR, function (event, data) {
-                if (data.fatal) {
-                    switch(data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            // versuchen, das Netzwerkproblem zu beheben
-                            console.log("Network Error: Trying to recover...");
-                            hls.startLoad();
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.log("Media Error: Trying to recover...");
-                            hls.recoverMediaError();
-                            break;
-                        default:
-                            // andere Fehler: Neuladen des HLS-Objekts
-                            console.log("Unrecoverable Error: Reloading the stream...");
-                            hls.destroy();
-                            setTimeout(() => {
-                                hls.loadSource(videoSrc);
-                                hls.attachMedia(<HTMLVideoElement>video);
-                            }, 5000);
-                            break;
-                    }
-                }
-            });
-        } else if ((<HTMLVideoElement>video).canPlayType('application/vnd.apple.mpegurl')) {
-            (<HTMLVideoElement>video).src = videoSrc;
-            (<HTMLVideoElement>video).addEventListener('loadedmetadata', function() {
-                (<HTMLVideoElement>video).play();
-            });
+                })
+                .catch(error => {
+                    console.log('Error checking stream availability:', error);
+                    livestreamText.style.display = 'block';
+                    setTimeout(checkStreamAvailability, 5000);
+                });
         }
+
+        function initHls(): void {
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    maxBufferSize: 0,
+                    maxBufferLength: 3,
+                    maxMaxBufferLength: 5,
+                    liveSyncDurationCount: 1,
+                });
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().then(() => console.log('Playing video...')).catch(e => console.error('Failed to play video:', e));
+                });
+                hls.on(Hls.Events.BUFFER_APPENDING, function(event, data) {
+                    console.log(`Buffering ${data.data.length} bytes of data.`);
+                });
+
+                // Skip video to 2 seconds before live edge if behind 5 seconds
+                hls.on(Hls.Events.FRAG_BUFFERED, function(event, data) {
+                    if (hls.media && hls.media.readyState === 4) {
+                        const liveEdge = hls.media.duration - hls.media.currentTime;
+                        if (liveEdge > 2) {
+                            hls.media.currentTime = hls.media.duration - 2;
+                        }
+                    }
+                });
+
+                // Continue video if live edge is reached and new data is appended
+                hls.on(Hls.Events.FRAG_BUFFERED, function(event, data) {
+                    if (hls.media && hls.media.readyState === 4) {
+                        hls.media.play();
+                    }
+                });
+
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                // Try to recover from network error
+                                console.log("Network Error: Trying to recover...");
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.log("Media Error: Trying to recover...");
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                // Unrecoverable errors: reload HLS object
+                                console.log("Unrecoverable Error: Reloading the stream...");
+                                hls.destroy();
+                                setTimeout(() => {
+                                    hls.loadSource(videoSrc);
+                                    hls.attachMedia(video);
+                                }, 5000);
+                                break;
+                        }
+                    }
+                });
+
+                video.addEventListener('ended', () => {
+                    livestreamText.style.display = 'block';
+                    setTimeout(checkStreamAvailability, 5000);
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = videoSrc;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+        }
+
+        checkStreamAvailability();
     }
 
     ngOnDestroy(): void {
