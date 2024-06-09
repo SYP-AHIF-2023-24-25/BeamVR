@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3');
 
 let db = new sqlite3.Database(__dirname + '/database.db', (err) => {
     if (err) {
@@ -9,7 +9,8 @@ let db = new sqlite3.Database(__dirname + '/database.db', (err) => {
 
 function createTable() {
     return new Promise((resolve, reject) => {
-        db.run(`CREATE TABLE IF NOT EXISTS users (
+	console.log("EXEC!!!!");
+        db.exec(`CREATE TABLE IF NOT EXISTS users (
             userId INTEGER PRIMARY KEY AUTOINCREMENT,
             tadeotId INTEGER NOT NULL UNIQUE,
             username TEXT NOT NULL UNIQUE,
@@ -17,8 +18,10 @@ function createTable() {
             score INTEGER NOT NULL
         )`, (err) => {
             if (err) {
+		console.log("ERROR!!! :(");
                 reject(err);
             } else {
+		console.log("ELSEEEE!! ");
                 resolve("Table created successfully.");
             }
         });

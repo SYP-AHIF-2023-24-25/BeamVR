@@ -30,6 +30,7 @@
     "underscore": "^1.12.1"
   },
   "devDependencies": {
+    "better-sqlite3": "^11.0.0",
     "video.js": "^8.6.1"
   }
 }
