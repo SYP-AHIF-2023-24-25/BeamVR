@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity Stream</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<video id="video" type="application/x-mpegURL" crossOrigin="anonymous" controls></video>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/0.8.2/hls.min.js"></script>
+<script>
+    let video = document.getElementById('video');
+    let videoSrc = 'http://45.93.251.122:8000/live/gamestream/index.m3u8';
+
+    if (Hls.isSupported()) {
+        var hls = new Hls({
+            maxBufferSize: 0,
+            maxBufferLength: 3,
+            maxMaxBufferLength: 5,
+            liveSyncDurationCount: 1,
+            //liveSyncDuration: 1, // Zeit in Sekunden, die synchronisiert werden soll
+            //liveMaxLatencyDuration: 3 // Maximale Latenz in Sekunden
+        });
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            video.play();
+        });
+        hls.on(Hls.Events.BUFFER_APPENDING, function(event, data) {
+            console.log(`Buffering ${data.data.length} bytes of data.`);
+        });
+
+        hls.on(Hls.Events.BUFFER_APPENDED, function(event, data) {
+            console.log(`Buffer appended. Current buffer length: ${video.buffered.length} seconds.`);
+            if (video.buffered.length > 3) {
+                hls.removeBufferRange(video.tagName, video.buffered.start(0), video.buffered.end(0) - 3);
+            }
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+            if (data.fatal) {
+                switch(data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        // versuchen, das Netzwerkproblem zu beheben
+                        console.log("Network Error: Trying to recover...");
+                        hls.startLoad();
+                        break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        console.log("Media Error: Trying to recover...");
+                        hls.recoverMediaError();
+                        break;
+                    default:
+                        // andere Fehler: Neuladen des HLS-Objekts
+                        console.log("Unrecoverable Error: Reloading the stream...");
+                        hls.destroy();
+                        setTimeout(() => {
+                            hls.loadSource(videoSrc);
+                            hls.attachMedia(video);
+                        }, 5000);
+                        break;
+                }
+            }
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata', function() {
+            video.play();
+        });
+    }
+</script>
+</body>
+</html>
