@@ -30,7 +30,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 function checkIsTrusted(req, res, next) {
-    let lines = fs.readFileSync('trustedUsers.txt').toString().split('\n');
+    let lines = fs.readFileSync(__dirname + '/trustedUsers.txt').toString().split('\n');
     let token = req.kauth.grant.access_token.content;
     for (let i = 0; i < lines.length; i++) {
         if (lines[i] === token.preferred_username) {
