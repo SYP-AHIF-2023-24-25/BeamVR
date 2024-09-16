@@ -47,7 +47,7 @@ Das Projekt besser strukturieren und übersichtlicher gestalten, den Code berein
 
 Integration eines neuen Spielermodels in das Spiel (+ für das Model optimierte Inverse Kinematik). (15)
 
-Anpassung der Animationen und Interaktionen des Modells. (15)
+Anpassung der Animationen und Interaktionen des Models. (15)
 
 ### Sprint 2 
 
