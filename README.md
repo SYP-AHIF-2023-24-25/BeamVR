@@ -2,85 +2,93 @@
 ## Projektantrag
 ### Ausgangslage
 #### Ist-Situation
-Als Basisspiel steht uns ein Unityprojekt des Vorgängerjahrgangs zur verfügung. In diesem ist der Gedanke, reale Gegenstände (in diesem Fall einen Balken) in die virtuelle Welt zu bringen. Die Umgebung bildet eine Stadt ab, in der man auf dem Dach eines Hochhauses über den virtuellen Balken balancieren soll. Bei einem Fehltritt fällt man hinab und das Spiel endet.
+Das aktuelle Projekt basiert auf einem bestehenden Unity-Projekt aus dem Vorjahr. In diesem Spiel geht es darum, reale Gegenstände – speziell einen Balken – in die virtuelle Welt zu übertragen. Der Spieler balanciert dabei auf einem virtuellen Balken über die Dächer einer Stadt, und bei einem Fehltritt fällt der Spieler in die Tiefe, woraufhin das Spiel endet.
 
-Als technisches Equipment stehen uns hierbei zwei Basisstationen, drei Body-Tracker (zwei für die Füße, einen für die Hüfte) und zwei Controller, welche virtuell die Hände zeigen, zur verfügung.
+Für die VR-Interaktion werden zwei Basisstationen, drei Body-Tracker (zwei für die Füße, einer für die Hüfte) und zwei Controller verwendet, die die Hände des Spielers in der virtuellen Umgebung simulieren.
 
 #### Probleme
-Beim alten BeamVR-Spiel treten mehrere Fehler auf. Die Kalibrierung des Spielers in die virtuelle Welt geschieht oft nicht ordnungsgemäß, da die Körperteile in der virtuellen Welt versetzt von der realen Welt sind. Dadurch kann sich der Spieler nicht orientieren und sich nicht richtig bewegen. Zusätzlich wird der Hüfttracker nicht kalibriert, weshalb sich die Hüfte des Spielers in der virtuellen Welt nicht bewegt und sich das Model des Spielers verzerrt.
-Weiteres befindet sich der Balken in der virtuellen Welt nicht auf der richtigen Position, wodurch sich der Spieler am Balken in der realen Welt nicht orientieren kann und sich dadurch verletzen könnte.
+Im aktuellen BeamVR-Spiel treten mehrere Probleme auf:
 
+* Die Kalibrierung des Spielers in die virtuelle Welt funktioniert oft nicht korrekt, sodass die Position der Körperteile in VR nicht mit der realen Welt übereinstimmt. Dies führt zu Orientierungsproblemen und einer ungenauen Steuerung.
+* Der Hüfttracker wird nicht richtig kalibriert, was dazu führt, dass sich die Hüfte in VR nicht bewegt und das Modell des Spielers verzerrt dargestellt wird.
+* Der Balken in der virtuellen Welt ist nicht richtig positioniert, was das Spielerlebnis beeinträchtigt und potenziell Verletzungsrisiken birgt.
+* Das Spiel kann nicht standalone ausgeführt werden, da die Kalibrierung und Anpassung an den SteamVR-Raum manuell vorgenommen werden muss.
 
 ### Zielsetzung
-Da beim vorjährigen BeamVR, wie zuvor erwähnt einige Schwierigkeiten auftreten und wir viele neue Ideen haben, wollen wir eine neue, eigene Version, dennoch mit dem selben Hintergedanken, reale Gegenstände in die virtuelle Welt zu bringen, programmieren.
+Das Ziel des Projekts ist es, eine optimierte und erweiterte Version des Spiels BeamVR zu entwickeln, die sowohl die bestehenden Probleme der Vorgängerversion behebt als auch neue Features und Funktionen einführt. Der Kern des Spiels, reale Gegenstände wie den Balken in die virtuelle Welt zu integrieren, bleibt erhalten. Die technische und visuelle Umsetzung wird jedoch deutlich verbessert, um eine immersivere und stabilere Spielerfahrung zu gewährleisten.
 
-Hierbei ist die Idee, als virtuelle Welt einen Dschungel zu verwenden. Wir wollen mit Gegenständen, wie Lianen arbeiten, mit denen man interagieren und diese zur Seite schieben kann um sich weiterzubewegen. Es soll auch möglich sein, mit anderen virtuellen Gegenständen, wie beispielsweise Steinen zu interagieren und diese zu werfen.
+## User Stories 
 
-Das Ziel des Spiels soll sein, dass man ohne vom Balken zu fallen alle Hindernisse überwinden kann.
+* Als Entwickler möchte ich den bestehenden Code bereinigen und optimieren, damit das Projekt besser strukturiert und leichter wartbar ist und alte Probleme behoben werden.
 
-Wenn man vom Balken fällt, ist das Spiel verloren und das Spiel beginnt wieder am Anfang des Balkens.
+* Als Spieler möchte ich ein neues, realistisches Spielermodell verwenden, damit meine Interaktionen in der VR-Umgebung immersiver wirken und das Spielerlebnis verbessert wird.
 
+* Als Spieler möchte ich, dass die Animationen und Interaktionen für das neue Modell flüssig und realistisch sind, damit das Spielerlebnis nahtlos und ansprechend ist.
 
-#### Konzept zur Problemlösung
-![Mindmap](Mindmap.png)
+* Als Spieler möchte ich ein User Interface im Hauptmenü haben, das es mir ermöglicht, zwischen verschiedenen Maps zu wählen, das Spiel zu beenden oder die Optionen zu öffnen, damit ich das Spiel einfach steuern kann, ohne komplizierte Eingaben vornehmen zu müssen.
 
-### Projektrisiken
-- Hardwarediebstahl
-- Hardwarebeschädigung / zerstörung
-- bei zu spätem Arbeiten in der Schule eingesperrt werden
+* Als Spieler möchte ich im Spiel über ein Pause-Menü verfügen, damit ich das Spiel unterbrechen und Optionen wie "Continue", "Zurück zum Hauptmenü" oder "Spiel beenden" auswählen kann.
 
-### Planung
-#### Grobe Meilensteine
-- Balken in die VR-Welt bringen
-- Alles wird korrekt getrackt
-- schöne Spielwelt
-- weitere Funktionen
+* Als Spieler möchte ich, dass der Balken automatisch via Tracking kalibriert wird und sich die Ausrichtung des Balkens beim Mapwechsel nicht verändert, damit ich eine präzise und konsistente Spielerfahrung habe, ohne die Kalibrierung manuell anpassen zu müssen.
 
-## User Stories (mit Hintergedanken Tag der offenen Tür)
-1. Als Projektteam wollen wir eine einfache Kalibrierung, damit wir keine Zeit verlieren und möglichst viele angehende Schüler:innen unser Spiel testen können.
+* Als Spieler möchte ich, dass die Zug-Map bei jedem Spielstart prozedural generiert wird, damit jede Spielsitzung eine neue Herausforderung bietet und die Wiederholbarkeit erhöht wird.
 
-2. Als Proejktteam wollen wir den Balken in jeder beliebigen Umgebung schnell und einfach in die virtuelle Welt bringen. Das Ausmessen soll mit den Controllern erfolgen. 
+### Optionale Erweiterungen 
 
-3. Als Spieler will ich die richtigen Maße des Balkens der realen Welt sehen. Somit sollen etwaige Unfälle vermieden werden.
+* Als Spieler möchte ich die Möglichkeit haben, Parameter der zufälligen Kartengenerierung (Größe, Komplexität) anzupassen, damit ich das Spiel nach meinen Vorlieben personalisieren kann.
 
-4. Als Spieler will ich in der virtuellen Welt vom Balken fallen können und erkenntlich sehen, dass ich das Spiel verloren habe.
+* Als Spieler möchte ich eine visuelle und akustische Rückmeldung erhalten, wenn mein Equipment erfolgreich erkannt und kalibriert wurde, damit ich sicher sein kann, dass alles korrekt funktioniert.
 
-5. Als Spieler will ich mit Gegenständen (wie Steine oder Lianen des Dschungels) interagieren können, beispielsweise bewegen oder werfen.
+## Sprint Planung 
 
-6. Als Spieler möchte ich einen menschlichen Körper sehen wenn ich nach unten schaue. Dies sollten eine Hüfte, zwei Beine, zwei Arme und zwei Hände sein.
+### Sprint 1 
 
+Das Projekt besser strukturieren und übersichtlicher gestalten, den Code bereinigen und optimieren. Probleme, die im letzten Jahr aufgetreten sind, beheben und das Beschädigte wieder funktionsfähig machen. (13)
 
-## Planung - Meilensteine 
+Integration eines neuen Spielermodels in das Spiel (+ für das Model optimierte Inverse Kinematik). (15)
 
-### Wintersemester 
-#### Sprint 1 
-* Fertige Map 
-* Einfache Tracker kallibrierung
-* Beam wird richtig kallibriert 
+Anpassung der Animationen und Interaktionen des Modells. (15)
 
-#### Sprint 2
-* Model 
-* Die Map wird dem Beam angepasst (alles wird so verschoben, damit der Beam in VR richtig liegt)
-* Das Model ist durch berechnung der Größe exakt so groß wie der User selbst 
-* Gravitation (Drücken von G)
-* Bessere Einbindung der Tracker
-* Inverse Kinematik 
-* Hai + Animation 
-* Funktionierende Webanwendung
+### Sprint 2 
 
-##### Sprint 3
-* Bewegungen in VR verlaufen flüssig (Überstreckung nicht mehr möglich)
-* Gravitation - automatisches Runterfallen (ohne Drücken von G)
-* Game Over - Restart
-* Balken Textur
-* Hai kreist im Wasser 
-* Webanwendung - Schnittstellen in Unity 
-* Stadt Map (noch keine Integration - nur funktionstüchtig)
-* Score berechnung für Tadeot
+Erstellung eines User Interfaces für das Hauptmenü. Dieses befindet sich in einer dunklen Box, in der bereits der Balken liegt. Nach der Auswahl einer Map "zerfällt" nach dem Laden die Box mit einer Animation und der Spieler steht ohne Ladebildschirm in der Map.
 
-### Sommersemester
-#### Allgemeine Ziele 
-* UI für Auswahl der Map 
-* Einbindung der Stadt Map 
-* Vögel + Animation + Bewegung 
-* weitere Ideen...
+(auch bei Gameover soll man automatisch in das Hauptmenü kommen)
+
+Die UI im Hauptmenü stellt folgende Elemente zur Verfügung: 
+
+* Mapauswahl
+     - Durch das Drücken dieses Buttons erscheint mit einer Animation ein Grid von den auszuwählenden Maps. Die jeweilige Map wird zur Veranschaulichung mit einem Bild dargestellt. 
+* Optionen (optional)
+* Spiel beenden
+
+(20)
+
+Erstellung eines User Interfaces für das Pause-Menü. Das Pause-Menü soll aus folgenden Komponenten bestehen: 
+
+* Continue-Button 
+* Zurück zum Hauptmenü 
+* Spiel beenden 
+
+(10)
+
+Automatische Balkenkalibrierung. Die Ausrichtung des Balkens soll sich mit dem Ändern der Map nicht mehr verändern. (20)
+
+### Sprint 3 
+
+Prozedurale Map Generierung für die Zug-Map. Diese Generierung soll folgende Merkmale aufweisen: 
+
+* Höhenunterschiede und schöne Anpassung der Schienen 
+* Keine merkbaren Performanceeinbrüche 
+* Unterschiedliche Biome 
+* Ansprechende Vegetation (auch zufällig generiert)
+
+(40)
+
+### Sprint 4
+
+Durch Relais gesteuerter Ventilator der mithilfe von MOSFETs die Geschwindigkeit des Zuges realitätsnah durch Wind simuliert.
+
+(60)
+
+https://www.justiz-auktion.de/Diverse-Ventilatoren-187321
