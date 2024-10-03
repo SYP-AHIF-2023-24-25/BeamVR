@@ -90,5 +90,3 @@ Prozedurale Map Generierung für die Zug-Map. Diese Generierung soll folgende Me
 Durch Relais gesteuerter Ventilator der mithilfe von MOSFETs die Geschwindigkeit des Zuges realitätsnah durch Wind simuliert.
 
 (60)
-
-https://www.justiz-auktion.de/Diverse-Ventilatoren-187321
